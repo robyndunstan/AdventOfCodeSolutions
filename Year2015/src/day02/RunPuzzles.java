@@ -2,13 +2,15 @@ package day02;
 
 import java.util.ArrayList;
 
+import tools.TestCase;
+
 public class RunPuzzles {
 
 	public static void main(String[] args) {
-		ArrayList<TestCase> testCases = createTestCases();
+		ArrayList<TestCase<String[], Integer>> testCases = createTestCases();
 		System.out.println("Day 02: I was Told There Would be No Math\r\tSection 1");
 		int testCaseCount = 0;
-		for (TestCase test : testCases) {
+		for (TestCase<String[], Integer> test : testCases) {
 			if (test.section == 1) {
 				testCaseCount++;
 				System.out.println("\t\tTest " + testCaseCount + "\tExpected: " + test.result + "\tActual: " + IWasToldThereWouldBeNoMath.getSumPaperNeeded(test.input));
@@ -18,7 +20,7 @@ public class RunPuzzles {
 		
 		System.out.println("\r\tSection 2");
 		testCaseCount = 0;
-		for (TestCase test : testCases) {
+		for (TestCase<String[], Integer> test : testCases) {
 			if (test.section == 2) {
 				testCaseCount++;
 				System.out.println("\t\tTest " + testCaseCount + "\tExpected: " + test.result + "\tActual: " + IWasToldThereWouldBeNoMath.getSumRibbonNeeded(test.input));
@@ -27,25 +29,12 @@ public class RunPuzzles {
 		System.out.println("\t\tPuzzle: " + IWasToldThereWouldBeNoMath.getSumRibbonNeeded(puzzleInput));
 	}
 
-	private static class TestCase {
-		public int section;
-		public String[] input;
-		public int result;
-		
-		public TestCase() {}
-		public TestCase(int section, String[] input, int result) {
-			this.section = section;
-			this.input = input;
-			this.result = result;
-		}
-	}
-	
-	private static ArrayList<TestCase> createTestCases() {
-		ArrayList<TestCase> tests = new ArrayList<TestCase>();
-		tests.add(new TestCase(1, testInput1, 58));
-		tests.add(new TestCase(1, testInput2, 43));
-		tests.add(new TestCase(2, testInput1, 34));
-		tests.add(new TestCase(2, testInput2, 14));
+	private static ArrayList<TestCase<String[], Integer>> createTestCases() {
+		ArrayList<TestCase<String[], Integer>> tests = new ArrayList<TestCase<String[], Integer>>();
+		tests.add(new TestCase<String[], Integer>(1, testInput1, 58));
+		tests.add(new TestCase<String[], Integer>(1, testInput2, 43));
+		tests.add(new TestCase<String[], Integer>(2, testInput1, 34));
+		tests.add(new TestCase<String[], Integer>(2, testInput2, 14));
 		return tests;
 	}
 	

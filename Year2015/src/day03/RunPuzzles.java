@@ -2,13 +2,15 @@ package day03;
 
 import java.util.ArrayList;
 
+import tools.TestCase;
+
 public class RunPuzzles {
 
 	public static void main(String[] args) throws Exception {
-		ArrayList<TestCase> testCases = createTestCases();
+		ArrayList<TestCase<String, Integer>> testCases = createTestCases();
 		System.out.println("Day 03: Perfectly Spherical Houses in a Vacuum\r\tSection 1");
 		int testCaseCount = 0;
-		for (TestCase test : testCases) {
+		for (TestCase<String, Integer> test : testCases) {
 			if (test.section == 1) {
 				testCaseCount++;
 				System.out.println("\t\tTest " + testCaseCount + "\tExpected: " + test.result + "\tActual: " + PerfectlySphericalHousesInAVacuum.getSantaHouseCount(test.input));
@@ -18,7 +20,7 @@ public class RunPuzzles {
 		
 		System.out.println("\r\tSection 2");
 		testCaseCount = 0;
-		for (TestCase test : testCases) {
+		for (TestCase<String, Integer> test : testCases) {
 			if (test.section == 2) {
 				testCaseCount++;
 				System.out.println("\t\tTest " + testCaseCount + "\tExpected: " + test.result + "\tActual: " + PerfectlySphericalHousesInAVacuum.getSantaAndRobotHouseCount(test.input));
@@ -27,27 +29,14 @@ public class RunPuzzles {
 		System.out.println("\t\tPuzzle: " + PerfectlySphericalHousesInAVacuum.getSantaAndRobotHouseCount(puzzleInput));
 	}
 
-	private static class TestCase {
-		public int section;
-		public String input;
-		public int result;
-		
-		public TestCase() {}
-		public TestCase(int section, String input, int result) {
-			this.section = section;
-			this.input = input;
-			this.result = result;
-		}
-	}
-	
-	private static ArrayList<TestCase> createTestCases() {
-		ArrayList<TestCase> tests = new ArrayList<TestCase>();
-		tests.add(new TestCase(1, ">", 2));
-		tests.add(new TestCase(1, "^>v<", 4));
-		tests.add(new TestCase(1, "^v^v^v^v^v", 2));
-		tests.add(new TestCase(2, "^v", 3));
-		tests.add(new TestCase(2, "^>v<", 3));
-		tests.add(new TestCase(2, "^v^v^v^v^v", 11));
+	private static ArrayList<TestCase<String, Integer>> createTestCases() {
+		ArrayList<TestCase<String, Integer>> tests = new ArrayList<TestCase<String, Integer>>();
+		tests.add(new TestCase<String, Integer>(1, ">", 2));
+		tests.add(new TestCase<String, Integer>(1, "^>v<", 4));
+		tests.add(new TestCase<String, Integer>(1, "^v^v^v^v^v", 2));
+		tests.add(new TestCase<String, Integer>(2, "^v", 3));
+		tests.add(new TestCase<String, Integer>(2, "^>v<", 3));
+		tests.add(new TestCase<String, Integer>(2, "^v^v^v^v^v", 11));
 		return tests;
 	}
 	
