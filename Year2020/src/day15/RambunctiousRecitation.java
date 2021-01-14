@@ -21,7 +21,7 @@ public class RambunctiousRecitation {
 		ArrayList<Integer> prevIndexArray = history.get(prevValue);
 		int prevIndex = prevIndexArray.size() == 1 ? prevIndexArray.get(0) : prevIndexArray.get(1);
 		if (prevIndex > index) {
-			return -1;
+			return (int)-1;
 		}
 		while (prevIndex < index) {
 			int nextIndex = prevIndex + 1;
