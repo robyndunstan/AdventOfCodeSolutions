@@ -23,21 +23,23 @@ public class RambunctiousRecitation {
 		if (prevIndex > index) {
 			return (int)-1;
 		}
-		while (prevIndex < index) {
-			int nextIndex = prevIndex + 1;
-			int nextValue;
-			if (prevIndexArray.size() == 1) {
-				nextValue = 0;
+		else {
+			while (prevIndex < index) {
+				int nextIndex = prevIndex + 1;
+				int nextValue;
+				if (prevIndexArray.size() == 1) {
+					nextValue = 0;
+				}
+				else {
+					nextValue = prevIndexArray.get(1) - prevIndexArray.get(0);
+				}
+				AddValue(nextIndex, nextValue);
+				prevIndex = nextIndex;
+				prevValue = nextValue;
+				prevIndexArray = history.get(prevValue);
 			}
-			else {
-				nextValue = prevIndexArray.get(1) - prevIndexArray.get(0);
-			}
-			AddValue(nextIndex, nextValue);
-			prevIndex = nextIndex;
-			prevValue = nextValue;
-			prevIndexArray = history.get(prevValue);
+			return prevValue;
 		}
-		return prevValue;
 	}
 	
 	private void AddValue(int index, int value) {
