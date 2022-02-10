@@ -3,7 +3,6 @@ package Year2015.day07;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import Year2015.day07.SomeAssemblyRequired.Wire;
 import Year2015.tools.TestCase;
 
 public class RunPuzzles {
@@ -21,17 +20,32 @@ public class RunPuzzles {
 					System.out.println("\t\t\t\t" + s);
 				}
 				System.out.println("\t\t\tActual:");
-				SomeAssemblyRequired.buildCircuit(test.input);
+				printWires(SomeAssemblyRequired.buildCircuit(test.input), "\t\t\t\t");
 			}
 		}
 		System.out.println("\t\tPuzzle: " );
-		HashMap<String, Wire> wires = SomeAssemblyRequired.buildCircuit(puzzleInput);
-		System.out.println(wires.get("a"));
+		HashMap<String, Integer> wires = SomeAssemblyRequired.buildCircuit(puzzleInput1);
+		System.out.println("\t\t\ta: " + wires.get("a"));
 		
 		System.out.println("\r\tSection 2");
 		System.out.println("\t\tPuzzle: " );
-		// Replace b wire input
-		//SomeAssemblyRequired.buildCircuit(puzzleInput);
+		ArrayList<String> puzzleInput2 = new ArrayList<String>();
+		for (String s : puzzleInput1) {
+			if (s.trim().substring(s.trim().length() - 2).equals(" b")) {
+				puzzleInput2.add("16076 -> b");
+			}
+			else {
+				puzzleInput2.add(s);
+			}
+		}
+		wires = SomeAssemblyRequired.buildCircuit(puzzleInput2.toArray());
+		System.out.println("\t\t\ta: " + wires.get("a"));
+	}
+	
+	private static void printWires(HashMap<String, Integer> wires, String prefix) {
+		for (String s : wires.keySet()) {
+			System.out.println(prefix + s + ": " + wires.get(s));
+		}
 	}
 
 	private static ArrayList<TestCase<String[], String[]>> createTestCases() {
@@ -60,7 +74,7 @@ public class RunPuzzles {
 			"x: 123  ",
 			"y: 456  "
 	};
-	private static String[] puzzleInput = {
+	private static String[] puzzleInput1 = {
 			"lf AND lq -> ls         ",
 			"iu RSHIFT 1 -> jn       ",
 			"bo OR bu -> bv          ",
