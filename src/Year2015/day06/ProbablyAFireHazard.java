@@ -1,4 +1,4 @@
-package day06;
+package Year2015.day06;
 
 import java.awt.Point;
 

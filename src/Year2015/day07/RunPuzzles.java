@@ -1,11 +1,10 @@
-package day07;
+package Year2015.day07;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import day06.ProbablyAFireHazard;
-import day07.SomeAssemblyRequired.Wire;
-import tools.TestCase;
+import Year2015.day07.SomeAssemblyRequired.Wire;
+import Year2015.tools.TestCase;
 
 public class RunPuzzles {
 

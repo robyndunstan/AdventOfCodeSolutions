@@ -1,4 +1,4 @@
-package day03;
+package Year2015.day03;
 
 import java.awt.Point;
 import java.util.ArrayList;

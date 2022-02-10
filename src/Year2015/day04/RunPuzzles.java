@@ -1,8 +1,8 @@
-package day04;
+package Year2015.day04;
 
 import java.util.ArrayList;
 
-import tools.TestCase;
+import Year2015.tools.TestCase;
 
 public class RunPuzzles {
 

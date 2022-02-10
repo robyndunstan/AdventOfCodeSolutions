@@ -1,4 +1,4 @@
-package day02;
+package Year2015.day02;
 
 public class IWasToldThereWouldBeNoMath {
 	private static String[] input;

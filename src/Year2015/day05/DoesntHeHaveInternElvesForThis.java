@@ -1,4 +1,4 @@
-package day05;
+package Year2015.day05;
 
 public class DoesntHeHaveInternElvesForThis {
 	public static int sumNiceStrings(int specVersion, String[] input) {

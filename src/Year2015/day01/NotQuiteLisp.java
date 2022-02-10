@@ -1,4 +1,4 @@
-package day01;
+package Year2015.day01;
 
 public class NotQuiteLisp {
 	private static String instructions;

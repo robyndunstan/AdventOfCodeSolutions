@@ -1,4 +1,4 @@
-package day04;
+package Year2015.day04;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;

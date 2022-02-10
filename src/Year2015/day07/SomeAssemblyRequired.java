@@ -1,4 +1,4 @@
-package day07;
+package Year2015.day07;
 
 import java.util.ArrayList;
 import java.util.HashMap;
