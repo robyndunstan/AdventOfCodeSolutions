@@ -2,18 +2,25 @@ package Year2015.day08;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 
-public class Matchsticks {
+import tools.RunPuzzle;
+import tools.TestCase;
+
+public class Matchsticks extends tools.RunPuzzle {
+	public Matchsticks(int dayNumber, String dayTitle, Object puzzleInput) {
+		super(dayNumber, dayTitle, puzzleInput);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public static void main(String[] args) {
+		RunPuzzle puzzle = new Matchsticks(8, "Matchsticks", puzzleFile);
+		puzzle.run();
+	}
+	
 	private String filename;
 	private int codeLength, dataLength, encodedLength;
-	
-	public Matchsticks() {
-		reset();
-	}
-	public Matchsticks(String filename) {
-		setFilename(filename);
-	}
-	
+
 	public void setFilename(String filename) {
 		this.filename = filename;
 		reset();
@@ -96,4 +103,28 @@ public class Matchsticks {
 		
 		return l;
 	}
+	@Override
+	public ArrayList<TestCase> createTestCases() {
+		ArrayList<TestCase> tests = new ArrayList<TestCase>();
+		tests.add(new TestCase<String, Integer>(1, "src\\Year2015\\day08\\data\\test1File", 12));
+		tests.add(new TestCase<String, Integer>(2, "src\\\\Year2015\\\\day08\\\\data\\\\test1File", 19));
+		return tests;
+	}
+	@Override
+	public void printResult(Object result) {
+		System.out.println("\t\t\t\t" + (Integer)result);
+	}
+	@Override
+	public Object doProcessing(int section, Object input) {
+		String file = (String)input;
+		setFilename(file);
+		if (section == 1) {
+			return getAnswer(1);
+		}
+		else {
+			return getAnswer(2);
+		}
+	}
+	
+	private static String puzzleFile = "src\\Year2015\\day08\\data\\puzzleFile";
 }
