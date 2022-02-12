@@ -44,7 +44,7 @@ public abstract class RunPuzzle {
 				System.out.println("\t\t\tExpected: ");
 				printResult(test.result);
 				System.out.println("\t\t\tActual: ");
-				printResult(doProcessing(1, test.input));
+				printResult(doProcessing(2, test.input));
 			}
 		}
 		System.out.println("\t\tPuzzle: ");
