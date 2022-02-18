@@ -107,7 +107,7 @@ public class Matchsticks extends tools.RunPuzzle {
 	public ArrayList<TestCase> createTestCases() {
 		ArrayList<TestCase> tests = new ArrayList<TestCase>();
 		tests.add(new TestCase<String, Integer>(1, "src\\Year2015\\day08\\data\\test1File", 12));
-		tests.add(new TestCase<String, Integer>(2, "src\\\\Year2015\\\\day08\\\\data\\\\test1File", 19));
+		tests.add(new TestCase<String, Integer>(2, "src\\Year2015\\day08\\data\\test1File", 19));
 		return tests;
 	}
 	@Override
