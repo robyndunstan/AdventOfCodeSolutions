@@ -36,6 +36,8 @@ public abstract class RunPuzzle {
 		}
 		System.out.println("\t\tPuzzle: ");
 		printResult(doProcessing(1, puzzleInput));
+
+		System.out.println("\tSection 2");
 		
 		testCaseCount = 0;
 		for (TestCase test : testCases) {
