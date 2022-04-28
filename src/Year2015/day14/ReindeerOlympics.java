@@ -7,14 +7,15 @@ import tools.TestCase;
 
 public class ReindeerOlympics extends RunPuzzle {
 	boolean debug = false;
-	static int raceTime = 2503;
+	static int puzzleRaceTime = 2503;
+	static int testRaceTime = 1000;
 
 	public ReindeerOlympics(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
 	}
 
 	public static void main(String[] args) {
-		RunPuzzle puzzle = new ReindeerOlympics(14, "ReindeerOlympics", puzzleInput);
+		RunPuzzle puzzle = new ReindeerOlympics(14, "Reindeer Olympics", puzzleInput);
 		puzzle.run();
 	}
 
@@ -38,19 +39,34 @@ public class ReindeerOlympics extends RunPuzzle {
 			reindeer.add(new Reindeer(s));
 		}
 		
+		int raceTime = reindeer.size() == 2 ? testRaceTime : puzzleRaceTime;
+		
 		for (int i = 0; i < raceTime; i++) {
 			for (Reindeer r : reindeer) {
 				r.nextSecond();
 			}
 			getLeadReindeer(reindeer).score++;
+			
+			if (debug) {
+				if (i % 100 == 0) {
+					System.out.println("Race second " + i);
+					for (Reindeer r : reindeer) {
+						System.out.println("\t" + r.name + " " + r.distance + " " + r.score);
+					}
+				}
+			}
 		}
 		
-		Reindeer winner = getLeadReindeer(reindeer);
+		if (debug) System.out.println("Winning reindeer is " + getLeadReindeer(reindeer).name);
 		if (section == 1) {
-			return winner.distance;
+			return getLeadReindeer(reindeer).distance;
 		}
 		else {
-			return winner.score;
+			int maxScore = 0;
+			for (Reindeer r : reindeer) {
+				maxScore = Math.max(maxScore, r.score);
+			}
+			return maxScore;
 		}
 	}
 	
@@ -87,25 +103,23 @@ public class ReindeerOlympics extends RunPuzzle {
 			if (debug) System.out.println(input);
 			int endIndex = input.indexOf("km/s");
 			int startIndex = input.substring(0, endIndex - 1).lastIndexOf(" ");
-			if (debug) System.out.println(startIndex + " " + endIndex);
 			this.speed = Integer.parseInt(input.substring(startIndex, endIndex).trim());
 			
 			startIndex = input.substring(endIndex).indexOf("for") + endIndex;
 			endIndex = input.substring(startIndex).indexOf("seconds") + startIndex;
-			if (debug) System.out.println(startIndex + " " + endIndex);
 			this.runTime = Integer.parseInt(input.substring(startIndex + 3, endIndex).trim());
 			
 			startIndex = input.lastIndexOf("for");
 			endIndex = input.lastIndexOf("seconds");
-			if (debug) System.out.println(startIndex + " " + endIndex);
 			this.restTime = Integer.parseInt(input.substring(startIndex + 3, endIndex).trim());
 			
 			name = input.substring(0, input.indexOf(" "));
+			if (debug) System.out.println(name + ", speed = " + speed + ", run time = " + runTime + ", rest time = " + restTime);
 		}
 		
 		private boolean isRunning(int time) {
-			time %= runTime + restTime;
-			if (time <= runTime) {
+			time %= (runTime + restTime);
+			if (time < runTime) {
 				return true;
 			}
 			else {
