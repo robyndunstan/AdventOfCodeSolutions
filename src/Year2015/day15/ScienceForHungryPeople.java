@@ -6,7 +6,7 @@ import tools.RunPuzzle;
 import tools.TestCase;
 
 public class ScienceForHungryPeople extends RunPuzzle {
-	private boolean debug = true;
+	private boolean debug = false;
 	private int maxScore;
 
 	public ScienceForHungryPeople(int dayNumber, String dayTitle, Object puzzleInput) {
@@ -62,12 +62,12 @@ public class ScienceForHungryPeople extends RunPuzzle {
 				durability += i.durability * i.quantity;
 				flavor += i.flavor * i.quantity;
 				texture += i.texture * i.quantity;
-				calories += i.calories * i.calories;
+				calories += i.calories * i.quantity;
 			}
 			
 			if (section == 2 && calories != 500) return;
 			
-			int score = capacity * durability * flavor * texture;
+			int score = Math.max(capacity, 0) * Math.max(durability, 0) * Math.max(flavor, 0) * Math.max(texture, 0);
 			if (score > maxScore) {
 				maxScore = score;
 				if (debug) {
@@ -77,7 +77,7 @@ public class ScienceForHungryPeople extends RunPuzzle {
 					}
 				}
 			}
-			maxScore = Math.max(capacity * durability * flavor * texture, maxScore);
+			maxScore = Math.max(score, maxScore);
 		}
 	}
 
@@ -102,6 +102,9 @@ public class ScienceForHungryPeople extends RunPuzzle {
 		public Ingredient(String input) {
 			this();
 			parseInput(input);
+			if (debug) {
+				System.out.println(name + ": " + capacity + ", " + durability + ", " + flavor + ", " + texture + ", " + calories);
+			}
 		}
 		
 		private void parseInput(String input) {
