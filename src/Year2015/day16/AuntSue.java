@@ -1,12 +1,10 @@
 package Year2015.day16;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import Year2015.day15.ScienceForHungryPeople;
 import tools.RunPuzzle;
 import tools.TestCase;
 
