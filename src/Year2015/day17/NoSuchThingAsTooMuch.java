@@ -8,6 +8,8 @@ import tools.RunPuzzle;
 import tools.TestCase;
 
 public class NoSuchThingAsTooMuch extends RunPuzzle {
+	boolean debug = false;
+	int totalCount, minContainersCount, minContainersUsed;
 
 	public NoSuchThingAsTooMuch(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
@@ -17,7 +19,7 @@ public class NoSuchThingAsTooMuch extends RunPuzzle {
 	public ArrayList<TestCase> createTestCases() {
 		ArrayList<TestCase> tests = new ArrayList<TestCase>();
 		tests.add(new TestCase<PuzzleInput, Integer>(1, testInput, 4));
-		tests.add(new TestCase<PuzzleInput, Integer>(2, testInput, 17));
+		tests.add(new TestCase<PuzzleInput, Integer>(2, testInput, 3));
 		return tests;
 	}
 
@@ -29,19 +31,53 @@ public class NoSuchThingAsTooMuch extends RunPuzzle {
 	@Override
 	public Object doProcessing(int section, Object input) {
 		PuzzleInput i = (PuzzleInput)input;
+		if (debug) System.out.println(i.total + " quantity and " + i.containers.length + " containers");
 		
 		ArrayList<Integer> availableMaster = new ArrayList<Integer>();
 		for (int c : i.containers) {
 			availableMaster.add(c);
 		}
 		
-		ArrayList<Integer> filled = new ArrayList<Integer>();
-		HashMap<Integer, Integer> combinations = new HashMap<Integer, Integer>();
+		totalCount = 0;
+		minContainersCount = 0;
+		minContainersUsed = availableMaster.size();
+		fillOneContainer(availableMaster, i.total, 0);
+		
+		if (section == 1) return totalCount;
+		else return minContainersCount;
 	}
 
 	public static void main(String[] args) {
 		RunPuzzle puzzle = new NoSuchThingAsTooMuch(17, "No Such Thing as Too Much", puzzleInput);
 		puzzle.run();
+	}
+	
+	private void fillOneContainer(ArrayList<Integer> available, int remaining, int containersUsed) {
+		if (remaining == 0) {
+			if (debug) System.out.println("Used " + containersUsed + " containers");
+			totalCount++;
+			if (containersUsed == minContainersUsed) {
+				minContainersCount++;
+			}
+			else if (containersUsed < minContainersUsed) {
+				minContainersUsed = containersUsed;
+				minContainersCount = 1;
+			}
+			if (debug) System.out.println("Total: " + totalCount + " Min Containers: " + minContainersUsed + " with count: " + minContainersCount);
+		}
+		else {
+			for (int i = 0; i < available.size(); i++) {
+				int c = available.get(i);
+				if (c <= remaining) {
+					ArrayList<Integer> clone = (ArrayList<Integer>) available.clone();
+					
+					for (int j = i; j >= 0; j--) clone.remove(j);
+					
+					if (debug) System.out.println("Filling container " + c + " with " + (containersUsed + 1) + " containers used and " + (remaining - c) + " remaining");
+					fillOneContainer(clone, remaining - c, containersUsed + 1);
+				}
+			}
+		}
 	}
 
 	static class PuzzleInput {
