@@ -117,8 +117,8 @@ public class RpgSimulator20XX extends RunPuzzle {
 		}
 		
 		boolean battleOpponent(Character boss) {
-			int myAttack = Math.max(this.getDamage() - boss.getArmor(), 0);
-			int bossAttack = Math.max(boss.getDamage() - this.getArmor(), 0);
+			int myAttack = Math.max(this.getDamage() - boss.getArmor(), 1);
+			int bossAttack = Math.max(boss.getDamage() - this.getArmor(), 1);
 			int myWin = (int)Math.ceil((double)boss.hitPoints / myAttack);
 			int bossWin = (int)Math.ceil((double)this.hitPoints / bossAttack);
 			return myWin <= bossWin;
