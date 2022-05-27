@@ -6,7 +6,7 @@ import tools.RunPuzzle;
 import tools.TestCase;
 
 public class MedicineForRudolph extends RunPuzzle {
-	private boolean debug = true;
+	private boolean debug = false;
 	
 	public MedicineForRudolph(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
@@ -36,8 +36,8 @@ public class MedicineForRudolph extends RunPuzzle {
 		}
 		
 		if (section == 1) {
-			StringBuffer startMolecule = new StringBuffer(p.molecule);
-			ArrayList<StringBuffer> molecules = new ArrayList<StringBuffer>();
+			String startMolecule = p.molecule;
+			ArrayList<String> molecules = new ArrayList<String>();
 			
 			for (Reaction rx : reactions) {
 				int startIndex = 0;
@@ -47,52 +47,41 @@ public class MedicineForRudolph extends RunPuzzle {
 					startIndex = startIndex + rx.input.length();
 					
 					boolean foundMatch = false;
-					for (StringBuffer m : molecules) {
-						if (m.compareTo(testMolecule) == 0) {
+					for (String m : molecules) {
+						if (m.equals(testMolecule.toString())) {
 							foundMatch = true;
 							break;
 						}
 					}
-					if (!foundMatch) molecules.add(testMolecule);
+					if (!foundMatch) molecules.add(testMolecule.toString());
 				}
 			}
 			
 			return molecules.size();
 		}
 		else {
-			int step = 0;
-			ArrayList<StringBuffer> testMolecules = new ArrayList<StringBuffer>();
-			testMolecules.add(new StringBuffer(p.molecule));
-			
-			while (testMolecules.size() > 0) {
-				step++;
-				ArrayList<StringBuffer> newMolecules = new ArrayList<StringBuffer>();
-				
-				for (StringBuffer m : testMolecules) {
-					for (Reaction rx : reactions) {
-						int startIndex = 0;
-						while (m.indexOf(rx.output, startIndex) > -1) {
-							startIndex = m.indexOf(rx.output, startIndex);
-							StringBuffer newMolecule = new StringBuffer(m).replace(startIndex, startIndex + rx.output.length(), rx.input);
-							if (newMolecule.compareTo(new StringBuffer("e")) == 0) return step;
-							startIndex = startIndex + rx.output.length();
-							
-							boolean foundMatch = false;
-							for (StringBuffer n: newMolecules) {
-								if (m.compareTo(newMolecule) == 0) {
-									foundMatch = true;
-									break;
-								}
-							}
-							if (!foundMatch) newMolecules.add(newMolecule);
+			int steps = 0;
+			StringBuffer molecule = new StringBuffer(p.molecule);
+			while (molecule.length() > 0) {
+				if (debug) System.out.println("Molecule: " + molecule.toString());
+				for (Reaction rx : reactions) {
+					if (rx.input.equals("e") && rx.output.equals(molecule.toString())) {
+						if (debug) System.out.println("Step " + (1 + steps) + ": Do reaction " + rx.output + " => " + rx.input);
+						return ++steps;
+					}
+					else if (!rx.input.equals("e")) {
+						int startIndex = molecule.indexOf(rx.output);
+						while (startIndex > -1) {
+							steps++;
+							if (debug) System.out.println("Step " + steps + ": Do reaction " + rx.output + " => " + rx.input);
+							molecule.replace(startIndex, startIndex + rx.output.length(), rx.input);
+							if (debug) System.out.println("\tNew molecule: " + molecule.toString());
+							startIndex = molecule.indexOf(rx.output, startIndex);
 						}
 					}
 				}
-				testMolecules = newMolecules;
-				if (debug) System.out.println(step + ": " + newMolecules.size());
-				if (step > 500) break;
 			}
-			return -1;
+			return steps;
 		}
 	}
 
@@ -100,7 +89,7 @@ public class MedicineForRudolph extends RunPuzzle {
 		RunPuzzle puzzle = new MedicineForRudolph(19, "Medicine for Rudolph", new PuzzleInput(puzzleReactions, puzzleMolecule));
 		puzzle.run();
 	}
-	
+
 	class Reaction {
 		String input, output;
 		Reaction(String input) {
