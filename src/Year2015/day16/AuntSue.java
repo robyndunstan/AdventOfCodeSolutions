@@ -24,7 +24,7 @@ public class AuntSue extends RunPuzzle {
 
 	@Override
 	public Object doProcessing(int section, Object input) {
-		DataFile file = new DataFile((String)input);
+		DataFile file = new DataFile(2015, 16, (String)input);
 		String[] data = file.getData();
 		ArrayList<Aunt> aunts = new ArrayList<Aunt>();
 			
@@ -46,7 +46,7 @@ public class AuntSue extends RunPuzzle {
 		puzzle.run();
 	}
 	
-	private static String puzzleFile = "src\\Year2015\\day16\\data\\puzzleFile";
+	private static String puzzleFile = "puzzleFile";
 
 	private class Aunt {
 		int id, children, cats, samoyeds, pomeranians, akitas, vizslas, goldfish, trees, cars, perfumes;

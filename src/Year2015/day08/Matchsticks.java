@@ -20,7 +20,7 @@ public class Matchsticks extends tools.RunPuzzle {
 	private int codeLength, dataLength, encodedLength;
 
 	public void setFilename(String filename) {
-		this.file = new DataFile(filename);
+		this.file = new DataFile(2015, 8, filename);
 		reset();
 		processFile();
 	}
@@ -96,8 +96,8 @@ public class Matchsticks extends tools.RunPuzzle {
 	@Override
 	public ArrayList<TestCase> createTestCases() {
 		ArrayList<TestCase> tests = new ArrayList<TestCase>();
-		tests.add(new TestCase<String, Integer>(1, "src\\Year2015\\day08\\data\\test1File", 12));
-		tests.add(new TestCase<String, Integer>(2, "src\\Year2015\\day08\\data\\test1File", 19));
+		tests.add(new TestCase<String, Integer>(1, "test1File", 12));
+		tests.add(new TestCase<String, Integer>(2, "test1File", 19));
 		return tests;
 	}
 	@Override
@@ -116,5 +116,5 @@ public class Matchsticks extends tools.RunPuzzle {
 		}
 	}
 	
-	private static String puzzleFile = "src\\Year2015\\day08\\data\\puzzleFile";
+	private static String puzzleFile = "puzzleFile";
 }

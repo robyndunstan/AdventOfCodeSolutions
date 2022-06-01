@@ -18,7 +18,7 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 	@Override
 	public ArrayList<TestCase> createTestCases() {
 		ArrayList<TestCase> tests = new ArrayList<TestCase>();
-		tests.add(new TestCase<String, Integer>(1, "src\\Year2015\\day13\\data\\test1File", 330));
+		tests.add(new TestCase<String, Integer>(1, "test1File", 330));
 		return tests;
 	}
 
@@ -70,7 +70,7 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 		puzzle.run();
 	}
 
-	private static String puzzleFile = "src\\Year2015\\day13\\data\\puzzleFile";
+	private static String puzzleFile = "puzzleFile";
 	
 	private void addMe(HashSet<String> guests, HashMap<String, HashMap<String, Integer>> happiness) {
 		HashMap<String, Integer> meHappy = new HashMap<String, Integer>();
@@ -112,7 +112,7 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 	}
 	
 	private void parseFile(String file, HashSet<String> guests, HashMap<String, HashMap<String, Integer>> happiness) {
-		DataFile d = new DataFile(file);
+		DataFile d = new DataFile(2015, 13, file);
 		String[] data = d.getData();
 		for (String s : data) {
 			parseLine(s.trim(), guests, happiness);

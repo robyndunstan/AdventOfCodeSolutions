@@ -17,6 +17,10 @@ public class DataFile {
 		this();
 		setFilename(filename);
 	}
+	public DataFile(int year, int day, String name) {
+		this();
+		setFilename("src\\Year" + year + "\\day" + (day < 10 ? "0" : "") + day + "\\data\\" + name);
+	}
 
 	public boolean setFilename(String filename) {
 		this.filename = filename;
