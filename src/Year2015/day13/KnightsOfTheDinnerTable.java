@@ -1,12 +1,10 @@
 package Year2015.day13;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import tools.DataFile;
 import tools.RunPuzzle;
 import tools.TestCase;
 
@@ -33,12 +31,7 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 	public Object doProcessing(int section, Object input) {
 		HashSet<String> guests = new HashSet<String>();
 		HashMap<String, HashMap<String, Integer>> happiness = new HashMap<String, HashMap<String, Integer>>();
-		try {
-			parseFile((String)input, guests, happiness);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return 0;
-		}
+		parseFile((String)input, guests, happiness);
 		if (section == 2) {
 			addMe(guests, happiness);
 		}
@@ -118,17 +111,12 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 		return sum;
 	}
 	
-	private void parseFile(String file, HashSet<String> guests, HashMap<String, HashMap<String, Integer>> happiness) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		
-		String line = br.readLine();
-		while (line != null) {
-			parseLine(line.trim(), guests, happiness);
-			line = br.readLine();
+	private void parseFile(String file, HashSet<String> guests, HashMap<String, HashMap<String, Integer>> happiness) {
+		DataFile d = new DataFile(file);
+		String[] data = d.getData();
+		for (String s : data) {
+			parseLine(s.trim(), guests, happiness);
 		}
-		
-		br.close();
-		
 		if (debug) {
 			System.out.println("Number of guests: " + guests.size());
 		}

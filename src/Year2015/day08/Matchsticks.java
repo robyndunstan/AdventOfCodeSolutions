@@ -1,16 +1,14 @@
 package Year2015.day08;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
 
+import tools.DataFile;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class Matchsticks extends tools.RunPuzzle {
 	public Matchsticks(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static void main(String[] args) {
@@ -18,11 +16,11 @@ public class Matchsticks extends tools.RunPuzzle {
 		puzzle.run();
 	}
 	
-	private String filename;
+	private DataFile file;
 	private int codeLength, dataLength, encodedLength;
 
 	public void setFilename(String filename) {
-		this.filename = filename;
+		this.file = new DataFile(filename);
 		reset();
 		processFile();
 	}
@@ -34,19 +32,11 @@ public class Matchsticks extends tools.RunPuzzle {
 	}
 	
 	public void processFile() {
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(filename));
-			
-			String line = br.readLine();
-			do {
-				codeLength += line.length();
-				dataLength += getDataLength(line);
-				encodedLength += getEncodedLength(line);
-				line = br.readLine();
-			} while (line != null);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
+		String[] input = file.getData();
+		for (String s : input) {
+			codeLength += s.length();
+			dataLength += getDataLength(s);
+			encodedLength += getEncodedLength(s);
 		}
 	}
 	

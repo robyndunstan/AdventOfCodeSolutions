@@ -1,10 +1,8 @@
 package Year2015.day16;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
+import tools.DataFile;
 import tools.RunPuzzle;
 import tools.TestCase;
 
@@ -26,29 +24,21 @@ public class AuntSue extends RunPuzzle {
 
 	@Override
 	public Object doProcessing(int section, Object input) {
-		try {
-			BufferedReader br = new BufferedReader(new FileReader((String)input));
-			String line = br.readLine();
-			ArrayList<Aunt> aunts = new ArrayList<Aunt>();
+		DataFile file = new DataFile((String)input);
+		String[] data = file.getData();
+		ArrayList<Aunt> aunts = new ArrayList<Aunt>();
 			
-			while (line != null) {
-				aunts.add(new Aunt(line));
-				line = br.readLine();
-			}
-			
-			br.close();
-			
-			Aunt auntData = new Aunt(3, 7, 2, 3, 0, 0, 5, 3, 2, 1);
-			
-			while (aunts.size() > 0 && !testAunt(section, auntData, aunts.get(0))) {
-				aunts.remove(0);
-			}
-			if (aunts.size() > 0) return aunts.get(0).id;
-			else return -1;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return -1;
+		for (String line : data) {
+			aunts.add(new Aunt(line));
 		}
+			
+		Aunt auntData = new Aunt(3, 7, 2, 3, 0, 0, 5, 3, 2, 1);
+			
+		while (aunts.size() > 0 && !testAunt(section, auntData, aunts.get(0))) {
+			aunts.remove(0);
+		}
+		if (aunts.size() > 0) return aunts.get(0).id;
+		else return -1;
 	}
 
 	public static void main(String[] args) {
