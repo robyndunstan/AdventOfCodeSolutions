@@ -2,6 +2,7 @@ package Year2016.day04;
 
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.DataFile;
 import tools.RunPuzzle;
 import tools.TestCase;
@@ -76,11 +77,10 @@ public class SecurityThroughObscurity extends RunPuzzle {
 		public boolean isValidChecksum() {
 			int[] letterCount = new int[26];
 			int maxCount = 0;
-			int asciiA = (int)'a';
 			
 			for (char c : encryptedName.toCharArray()) {
 				if (c != '-') {
-					int index = ((int)c) % asciiA;
+					int index = ((int)c) % Constants.aValue;
 					letterCount[index]++;
 					maxCount = Math.max(maxCount, letterCount[index]);
 				}
@@ -91,7 +91,7 @@ public class SecurityThroughObscurity extends RunPuzzle {
 			while (cs.length() < 5) {
 				for (int i = 0; i < 26; i++) {
 					if (letterCount[i] == count) {
-						cs.append((char)(asciiA + i));
+						cs.append((char)(Constants.aValue + i));
 					}
 				}
 				count--;
@@ -110,7 +110,7 @@ public class SecurityThroughObscurity extends RunPuzzle {
 				else {
 					int cIndex = (int)c - asciiA;
 					int newIndex = (cIndex + sectionId) % 26;
-					char newLetter = (char)(asciiA + newIndex);
+					char newLetter = (char)(Constants.aValue + newIndex);
 					name.append(newLetter);
 				}
 			}
