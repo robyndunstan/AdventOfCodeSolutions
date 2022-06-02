@@ -5,6 +5,7 @@ import java.io.CharArrayReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
@@ -12,7 +13,6 @@ public class ElvesLookElvesSay extends RunPuzzle {
 
 	public ElvesLookElvesSay(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class ElvesLookElvesSay extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override
@@ -67,7 +67,6 @@ public class ElvesLookElvesSay extends RunPuzzle {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

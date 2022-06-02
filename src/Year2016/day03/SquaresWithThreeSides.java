@@ -1,15 +1,16 @@
 package Year2016.day03;
 
 import java.util.ArrayList;
+
+import tools.Constants;
 import tools.DataFile;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class SquaresWithThreeSides extends RunPuzzle {
-	boolean debug = false;
-
 	public SquaresWithThreeSides(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	@Override
@@ -21,7 +22,7 @@ public class SquaresWithThreeSides extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

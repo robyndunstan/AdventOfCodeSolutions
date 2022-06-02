@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
@@ -15,7 +16,6 @@ public class AllInASingleNight extends tools.RunPuzzle {
 
 	public AllInASingleNight(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 
 	public static void main(String[] args) {
@@ -33,7 +33,7 @@ public class AllInASingleNight extends tools.RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

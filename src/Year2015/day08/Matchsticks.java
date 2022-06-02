@@ -2,6 +2,7 @@ package Year2015.day08;
 
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.DataFile;
 import tools.RunPuzzle;
 import tools.TestCase;
@@ -102,7 +103,7 @@ public class Matchsticks extends tools.RunPuzzle {
 	}
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 	@Override
 	public Object doProcessing(int section, Object input) {

@@ -3,13 +3,13 @@ package Year2015.day06;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class ProbablyAFireHazard extends tools.RunPuzzle {
 	public ProbablyAFireHazard(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static void main(String[] args) {
@@ -188,7 +188,7 @@ public class ProbablyAFireHazard extends tools.RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

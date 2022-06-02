@@ -3,16 +3,17 @@ package Year2015.day24;
 import java.util.ArrayList;
 import java.util.List;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class ItHangsInTheBalance extends RunPuzzle {
-	private boolean debug = false;
 	int minQty;
 	long minEnt;
 
 	public ItHangsInTheBalance(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	@Override
@@ -25,7 +26,7 @@ public class ItHangsInTheBalance extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Long)result);
+		System.out.println(Constants.resultIndent + (Long)result);
 	}
 
 	@Override

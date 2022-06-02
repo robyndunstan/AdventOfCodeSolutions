@@ -2,6 +2,7 @@ package Year2015.day02;
 
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
@@ -28,7 +29,7 @@ public class IWasToldThereWouldBeNoMath extends tools.RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

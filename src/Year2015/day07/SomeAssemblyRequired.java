@@ -3,13 +3,13 @@ package Year2015.day07;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class SomeAssemblyRequired extends tools.RunPuzzle {
 	public SomeAssemblyRequired(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static void main (String[] args) {
@@ -190,11 +190,11 @@ public class SomeAssemblyRequired extends tools.RunPuzzle {
 	public void printResult(Object result) {
 		HashMap<String, Integer> r = (HashMap<String, Integer>)result;
 		if (r.containsKey("a")) {
-			System.out.println("\t\t\t\ta: " + r.get("a"));
+			System.out.println(Constants.resultIndent + "a: " + r.get("a"));
 		}
 		else {
 			for (String s : r.keySet()) {
-				System.out.println("\t\t\t\t" + s + ": " + r.get(s));
+				System.out.println(Constants.resultIndent + s + ": " + r.get(s));
 			}
 		}
 	}

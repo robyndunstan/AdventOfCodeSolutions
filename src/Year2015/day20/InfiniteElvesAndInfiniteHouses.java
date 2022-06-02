@@ -2,14 +2,14 @@ package Year2015.day20;
 
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class InfiniteElvesAndInfiniteHouses extends RunPuzzle {
-	boolean debug = false;
-
 	public InfiniteElvesAndInfiniteHouses(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	@Override
@@ -19,7 +19,7 @@ public class InfiniteElvesAndInfiniteHouses extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

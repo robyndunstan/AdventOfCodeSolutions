@@ -2,16 +2,17 @@ package Year2015.day14;
 
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class ReindeerOlympics extends RunPuzzle {
-	boolean debug = false;
 	static int puzzleRaceTime = 2503;
 	static int testRaceTime = 1000;
 
 	public ReindeerOlympics(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	public static void main(String[] args) {
@@ -29,7 +30,7 @@ public class ReindeerOlympics extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package Year2016.day02;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
@@ -22,7 +23,7 @@ public class BathroomSecurity extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (String)result);
+		System.out.println(Constants.resultIndent + (String)result);
 	}
 
 	@Override

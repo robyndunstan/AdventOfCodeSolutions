@@ -2,14 +2,14 @@ package Year2015.day19;
 
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class MedicineForRudolph extends RunPuzzle {
-	private boolean debug = false;
-	
 	public MedicineForRudolph(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class MedicineForRudolph extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

@@ -7,59 +7,46 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import Year2015.day03.PerfectlySphericalHousesInAVacuum;
+import tools.Constants;
+import tools.MD5Hash;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class TheIdealStockingStuffer extends tools.RunPuzzle {
-	static String charset = "UTF-8";
-	
 	public TheIdealStockingStuffer(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 
 	public static void main(String[] args) {
 		RunPuzzle puzzle = new TheIdealStockingStuffer(4, "The Ideal Stocking Stuffer", puzzleInput);
 		puzzle.run();
 	}
-	
-	private ByteBuffer getMd5Hash(String input) {
-		byte[] inputByte = null;
-		byte[] outputByte = null;
-		ByteBuffer outputBuffer = null;
-		ByteBuffer outputDup = null;
 
-		try {
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			inputByte = input.getBytes(charset);
-			outputByte = md.digest(inputByte);
-			outputBuffer = ByteBuffer.wrap(outputByte);
-			outputDup = outputBuffer.duplicate();
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return outputBuffer;
-	}
-	
 	private int getFiveInitialZeros(String input) {
 		int count = 0;
-		ByteBuffer buffer = null;
+		String hash = "";
 		do {
 			count++;
-			buffer = getMd5Hash(input + count);
-		} while (Integer.toHexString(buffer.getInt()).length() != 3);
+			try {
+				hash = MD5Hash.getHexHash(input + count);
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}
+		} while (!hash.startsWith("00000"));
 		return count;
 	}
 	
 	private int getSixInitialZeros(String input) {
 		int count = 0;
-		ByteBuffer buffer = null;
+		String hash = "";
 		do {
 			count++;
-			buffer = getMd5Hash(input + count);
-		} while (Integer.toHexString(buffer.getInt()).length() != 2);
+			try {
+				hash = MD5Hash.getHexHash(input + count);
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}
+		} while (!hash.startsWith("000000"));
 		return count;
 	}
 
@@ -73,7 +60,7 @@ public class TheIdealStockingStuffer extends tools.RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

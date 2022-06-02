@@ -2,6 +2,7 @@ package Year2015.day16;
 
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.DataFile;
 import tools.RunPuzzle;
 import tools.TestCase;
@@ -19,7 +20,7 @@ public class AuntSue extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

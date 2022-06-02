@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Year2015.day16.AuntSue;
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class NoSuchThingAsTooMuch extends RunPuzzle {
-	boolean debug = false;
 	int totalCount, minContainersCount, minContainersUsed;
 
 	public NoSuchThingAsTooMuch(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	@Override
@@ -25,7 +26,7 @@ public class NoSuchThingAsTooMuch extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

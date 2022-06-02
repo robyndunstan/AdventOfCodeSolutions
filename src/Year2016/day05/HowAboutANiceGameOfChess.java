@@ -4,13 +4,12 @@ import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.MD5Hash;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class HowAboutANiceGameOfChess extends RunPuzzle {
-	final String charset = "UTF-8";
-
 	public HowAboutANiceGameOfChess(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
 	}
@@ -25,7 +24,7 @@ public class HowAboutANiceGameOfChess extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (String)result);
+		System.out.println(Constants.resultIndent + (String)result);
 	}
 
 	@Override

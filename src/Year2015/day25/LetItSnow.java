@@ -4,15 +4,16 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class LetItSnow extends RunPuzzle {
-	boolean debug = false;
 	static HashMap<Integer, HashMap<Integer, Long>> codes;
 
 	public LetItSnow(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class LetItSnow extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Long)result);
+		System.out.println(Constants.resultIndent + (Long)result);
 	}
 
 	@Override

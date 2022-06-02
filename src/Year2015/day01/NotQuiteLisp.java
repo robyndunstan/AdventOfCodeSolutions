@@ -3,7 +3,7 @@ package Year2015.day01;
 import java.util.ArrayList;
 
 import tools.TestCase;
-
+import tools.Constants;
 import tools.RunPuzzle;
 
 public class NotQuiteLisp extends tools.RunPuzzle {
@@ -39,7 +39,7 @@ public class NotQuiteLisp extends tools.RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

@@ -7,6 +7,7 @@ public abstract class RunPuzzle {
 	int dayNumber;
 	String dayTitle;
 	Object puzzleInput;
+	protected boolean debug;
 	
 	public abstract ArrayList<TestCase> createTestCases();
 	public abstract void printResult(Object result);

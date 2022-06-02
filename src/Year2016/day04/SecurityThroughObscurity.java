@@ -8,10 +8,9 @@ import tools.RunPuzzle;
 import tools.TestCase;
 
 public class SecurityThroughObscurity extends RunPuzzle {
-	boolean debug = false;
-
 	public SecurityThroughObscurity(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	@Override
@@ -25,7 +24,7 @@ public class SecurityThroughObscurity extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override
@@ -102,13 +101,12 @@ public class SecurityThroughObscurity extends RunPuzzle {
 		}
 		
 		public String decryptName() {
-			int asciiA = (int)'a';
 			StringBuffer name = new StringBuffer();
 			
 			for (char c : encryptedName.toCharArray()) {
 				if (c == '-') name.append(' ');
 				else {
-					int cIndex = (int)c - asciiA;
+					int cIndex = (int)c - Constants.aValue;
 					int newIndex = (cIndex + sectionId) % 26;
 					char newLetter = (char)(Constants.aValue + newIndex);
 					name.append(newLetter);

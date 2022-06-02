@@ -2,14 +2,14 @@ package Year2015.day23;
 
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class OpeningTheTuringLock extends RunPuzzle {
-	boolean debug = false;
-	
 	public OpeningTheTuringLock(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class OpeningTheTuringLock extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

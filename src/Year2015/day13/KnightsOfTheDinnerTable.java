@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import tools.Constants;
 import tools.DataFile;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class KnightsOfTheDinnerTable extends RunPuzzle {
-	static boolean debug = false;
-
 	public KnightsOfTheDinnerTable(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override

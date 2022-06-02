@@ -2,16 +2,13 @@ package Year2015.day11;
 
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class CorporatePolicy extends RunPuzzle {
-	static final int aVal = 'a';
-	static final int zVal = 'z';
-
 	public CorporatePolicy(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -24,7 +21,7 @@ public class CorporatePolicy extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (String)result);
+		System.out.println(Constants.resultIndent + (String)result);
 	}
 
 	@Override
@@ -61,8 +58,8 @@ public class CorporatePolicy extends RunPuzzle {
 	private String iterateChar(String pw, int i) {
 		StringBuffer newPw = new StringBuffer(pw);
 		int newChar = newPw.charAt(i) + 1;
-		if (newChar > zVal) {
-			newChar = aVal;
+		if (newChar > Constants.zValue) {
+			newChar = Constants.aValue;
 			newPw.setCharAt(i, (char)newChar);
 			if (i > 0) {
 				newPw = new StringBuffer(iterateChar(newPw.toString(), i - 1));

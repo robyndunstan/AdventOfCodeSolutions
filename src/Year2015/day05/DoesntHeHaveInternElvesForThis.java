@@ -2,13 +2,13 @@ package Year2015.day05;
 
 import java.util.ArrayList;
 
+import tools.Constants;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class DoesntHeHaveInternElvesForThis extends tools.RunPuzzle {
 	public DoesntHeHaveInternElvesForThis(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 
 	public static void main(String[] args) {
@@ -100,7 +100,7 @@ public class DoesntHeHaveInternElvesForThis extends tools.RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		System.out.println(Constants.resultIndent + (Integer)result);
 	}
 
 	@Override
