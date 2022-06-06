@@ -16,8 +16,12 @@ public class MD5Hash {
 		byte[] inputByte = input.getBytes();
 		byte[] outputByte = md.digest(inputByte);
 		ByteBuffer outputBuffer = ByteBuffer.wrap(outputByte);
-		StringBuffer hex = new StringBuffer(Integer.toHexString(outputBuffer.getInt()));
-		while (hex.length() < 8) hex.insert(0, '0');
+		StringBuffer hex = new StringBuffer();
+		while (outputBuffer.hasRemaining()) {
+			StringBuffer temp = new StringBuffer(Integer.toHexString(outputBuffer.getInt()));
+			while (temp.length() < 8) temp.insert(0, '0');
+			hex.append(temp.toString());
+		}
 		return hex.toString();
 	}
 }
