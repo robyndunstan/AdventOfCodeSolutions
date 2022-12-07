@@ -7,6 +7,7 @@ public abstract class RunPuzzle {
 	int dayNumber;
 	String dayTitle;
 	Object puzzleInput;
+	public boolean debug;
 	
 	public abstract ArrayList<TestCase> createTestCases();
 	public abstract void printResult(Object result);
@@ -16,6 +17,7 @@ public abstract class RunPuzzle {
 		this.dayNumber = dayNumber;
 		this.dayTitle = dayTitle;
 		this.puzzleInput = puzzleInput;
+		this.debug = false;
 	}
 	
 	public void run() {
