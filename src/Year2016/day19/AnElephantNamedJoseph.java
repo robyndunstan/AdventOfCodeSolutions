@@ -25,7 +25,7 @@ public class AnElephantNamedJoseph extends RunPuzzle {
 	public void printResult(Object result) {
 		System.out.println(Constants.resultIndent + (Integer)result);
 	}
-
+	
 	@Override
 	public Object doProcessing(int section, Object input) {
 		ArrayList<Integer> elves = new ArrayList<Integer>();
