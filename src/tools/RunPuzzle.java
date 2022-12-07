@@ -9,6 +9,8 @@ public abstract class RunPuzzle {
 	Object puzzleInput;
 	public boolean debug;
 	
+	public static String defaultResultIndent = "\t\t\t\t";
+	
 	public abstract ArrayList<TestCase> createTestCases();
 	public abstract void printResult(Object result);
 	public abstract Object doProcessing(int section, Object input);
