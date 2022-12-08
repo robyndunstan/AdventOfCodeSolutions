@@ -15,6 +15,7 @@ public class SupplyStacks extends RunPuzzle {
 	public ArrayList<TestCase> createTestCases() {
 		ArrayList<TestCase> tests = new ArrayList<TestCase>();
 		tests.add(new TestCase<CraneInput, String>(1, new CraneInput(test1Stacks, test1Instructions), "CMZ"));
+		tests.add(new TestCase<CraneInput, String>(2, new CraneInput(test1Stacks, test1Instructions), "MCD"));
 		return tests;
 	}
 
@@ -25,12 +26,66 @@ public class SupplyStacks extends RunPuzzle {
 
 	@Override
 	public Object doProcessing(int section, Object input) {
+		ArrayList<StringBuilder> stacks = new ArrayList<StringBuilder>();
+		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+		CraneInput setup = (CraneInput)input;
 		
+		for (String s : setup.stacks) {
+			stacks.add(new StringBuilder(s));
+		}
+		for (String s : setup.instructions) {
+			instructions.add(new Instruction(s));
+		}
+		
+		for (Instruction i : instructions) {
+			if (section == 1) {
+				for (int j = 0; j < i.numberToMove; j++) {
+					stacks.get(i.targetStack - 1).insert(0, stacks.get(i.sourceStack - 1).charAt(0));
+					stacks.get(i.sourceStack - 1).deleteCharAt(0);
+				}
+			}
+			else {
+				stacks.get(i.targetStack - 1).insert(0, stacks.get(i.sourceStack - 1).substring(0, i.numberToMove));
+				stacks.set(i.sourceStack - 1, new StringBuilder(stacks.get(i.sourceStack - 1).substring(i.numberToMove)));
+			}
+		}
+		
+		StringBuilder result = new StringBuilder();
+		for (StringBuilder stack : stacks) {
+			result.append(stack.charAt(0));
+		}
+		return result.toString();
 	}
 
 	public static void main(String[] args) {
 		RunPuzzle puzzle = new SupplyStacks(5, "Supply Stacks", new CraneInput(puzzleStacks, puzzleInstructions));
 		puzzle.run();
+	}
+	
+	public static class Instruction {
+		int numberToMove;
+		int sourceStack;
+		int targetStack;
+		
+		public Instruction(String s) {
+			parseInstruction(s);
+		}
+		
+		// "move # from # to #"
+		public void parseInstruction(String s) {
+			s = s.trim();
+			
+			int startIndex = s.indexOf(" ");
+			int endIndex = s.indexOf(" ", startIndex + 1);
+			numberToMove = Integer.parseInt(s.substring(startIndex + 1, endIndex));
+			
+			startIndex = s.indexOf(" ", endIndex + 1);
+			endIndex = s.indexOf(" ", startIndex + 1);
+			sourceStack = Integer.parseInt(s.substring(startIndex + 1, endIndex));
+			
+			startIndex = s.indexOf(" ", endIndex + 1);
+			targetStack = Integer.parseInt(s.substring(startIndex + 1));
+		}
 	}
 
 	public static class CraneInput {
