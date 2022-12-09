@@ -1,5 +1,9 @@
 package Year2022.day07;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import tools.RunPuzzle;
@@ -11,24 +15,44 @@ public class NoSpaceLeftOnDevice extends RunPuzzle {
 
 	public NoSpaceLeftOnDevice(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		this.debug = false;
 	}
 
 	@Override
 	public ArrayList<TestCase> createTestCases() {
 		ArrayList<TestCase> tests = new ArrayList<TestCase>();
-		tests.add(new TestCase<String, Long>(1, test1File, 95437l));
+		tests.add(new TestCase<String, String>(1, test1File, (new Long(95437l)).toString()));
 		return tests;
 	}
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println(this.defaultResultIndent + (Long)result);
+		System.out.println(this.defaultResultIndent + (String)result);
 	}
 
 	@Override
 	public Object doProcessing(int section, Object input) {
-		// TODO Auto-generated method stub
-		return null;
+		String filename = (String)input;
+		parseFileSystem(filename);
+		
+		if (section == 1) {
+			return (new Long(sumFoldersLessThanLimit(root, 100000l, 0l))).toString();
+		}
+		else {
+			return "";
+		}
+	}
+	
+	private long sumFoldersLessThanLimit(File currentFolder, long limit, long currentTotal) {
+		long thisFolderSize = currentFolder.getSize();
+		if (thisFolderSize <= limit) currentTotal += thisFolderSize;
+		
+		for (File f : currentFolder.contents) {
+			if (f.isFolder) {
+				currentTotal = sumFoldersLessThanLimit(f, limit, currentTotal);
+			}
+		}
+		return currentTotal;
 	}
 
 	public static void main(String[] args) {
@@ -37,7 +61,84 @@ public class NoSpaceLeftOnDevice extends RunPuzzle {
 	}
 	
 	void parseFileSystem(String filename) {
+		root = new File();
+		root.name = "/";
+		root.isFolder = true;
 		
+		try {
+			StringBuilder currentPath = new StringBuilder();
+			File currentFolder = root;
+			
+			BufferedReader br = new BufferedReader(new FileReader(filename));
+			String line = br.readLine();
+			do {
+				if (this.debug) System.out.println("line : " + line);
+				if (line.startsWith("$ cd ")) {
+					String newFolderName = line.substring("$ cd ".length());
+					if (newFolderName.equals("/")) {
+						currentFolder = root;
+						currentPath = new StringBuilder("/");
+						if (this.debug) System.out.println("\tSet path: " + currentPath);
+					}
+					else if (newFolderName.equals("..")) {
+						int slashIndex = currentPath.lastIndexOf("/");
+						if (slashIndex > 0) {
+							currentPath.delete(slashIndex, currentPath.length());
+							currentFolder = root.findFile(currentPath.toString());
+							if (this.debug) System.out.println("\tSet path: " + currentPath);
+						}
+						else if (slashIndex == 0) {
+							currentFolder = root;
+							currentPath = new StringBuilder("/");
+							if (this.debug) System.out.println("\tSet path: " + currentPath);
+						}
+					}
+					else {
+						currentPath.append((currentPath.toString().equals("/") ? "" : "/") + newFolderName);
+						File newFolder = currentFolder.findFile(newFolderName);
+						if (newFolder == null) {
+							newFolder = new File();
+							newFolder.isFolder = true;
+							newFolder.name = newFolderName;
+							currentFolder.contents.add(newFolder);
+						}
+						currentFolder = newFolder;
+						if (this.debug) System.out.println("\tSet path: " + currentPath);
+					}
+				}
+				else if (line.startsWith("dir ")) {
+					String newFolderName = line.substring("dir ".length());
+					File newFolder = currentFolder.findFile(newFolderName);
+					if (newFolder == null) {
+						newFolder = new File();
+						newFolder.isFolder = true;
+						newFolder.name = newFolderName;
+						currentFolder.contents.add(newFolder);
+					}
+					if (this.debug) System.out.println("\tCreate folder " + currentPath + (currentPath.toString().equals("/") ? "" : "/") + newFolderName);
+				}
+				else if (!line.startsWith("$")) { // should only be "#### filename"
+					int spaceIndex = line.indexOf(" ");
+					long size = Long.parseLong(line.substring(0, spaceIndex));
+					String newFileName = line.substring(spaceIndex + 1);
+					File newFile = currentFolder.findFile(newFileName);
+					if (newFile == null) {
+						newFile = new File();
+						newFile.isFolder = false;
+						newFile.name = newFileName;
+						newFile.setSize(size);
+						currentFolder.contents.add(newFile);
+					}
+					if (this.debug) System.out.println("\tCreate file " + currentPath + (currentPath.toString().equals("/") ? "" : "/") + newFileName);
+				}
+				// ignore "$ ls"
+				
+				line = br.readLine();
+			} while (line != null);
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private static class File {
