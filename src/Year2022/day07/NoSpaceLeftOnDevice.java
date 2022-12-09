@@ -21,13 +21,14 @@ public class NoSpaceLeftOnDevice extends RunPuzzle {
 	@Override
 	public ArrayList<TestCase> createTestCases() {
 		ArrayList<TestCase> tests = new ArrayList<TestCase>();
-		tests.add(new TestCase<String, String>(1, test1File, (new Long(95437l)).toString()));
+		tests.add(new TestCase<String, Long>(1, test1File, 95437l));
+		tests.add(new TestCase<String, Long>(2, test1File, 24933642l));
 		return tests;
 	}
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println(this.defaultResultIndent + (String)result);
+		System.out.println(this.defaultResultIndent + (Long)result);
 	}
 
 	@Override
@@ -36,11 +37,28 @@ public class NoSpaceLeftOnDevice extends RunPuzzle {
 		parseFileSystem(filename);
 		
 		if (section == 1) {
-			return (new Long(sumFoldersLessThanLimit(root, 100000l, 0l))).toString();
+			return sumFoldersLessThanLimit(root, 100000l, 0l);
 		}
 		else {
-			return "";
+			long totalSpace = 70000000l;
+			long neededSpace = 30000000l;
+			long usedSpace = root.getSize();
+			long availableSpace = totalSpace - usedSpace;
+			long minFolderSize = neededSpace - availableSpace;
+			return minFolderGreaterThanLimit(root, minFolderSize, usedSpace);
 		}
+	}
+	
+	private long minFolderGreaterThanLimit(File currentFolder, long limit, long currentMin) {
+		long thisFolderSize = currentFolder.getSize();
+		if (thisFolderSize >= limit) currentMin = Math.min(currentMin, thisFolderSize);
+		
+		for (File f : currentFolder.contents) {
+			if (f.isFolder) {
+				currentMin = minFolderGreaterThanLimit(f, limit, currentMin);
+			}
+		}
+		return currentMin;
 	}
 	
 	private long sumFoldersLessThanLimit(File currentFolder, long limit, long currentTotal) {
