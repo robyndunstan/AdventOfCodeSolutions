@@ -14,12 +14,15 @@ public class RopeBridge extends RunPuzzle {
 
 	public RopeBridge(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		this.debug = false;
 	}
 
 	@Override
 	public ArrayList<TestCase> createTestCases() {
 		ArrayList<TestCase> tests = new ArrayList<TestCase>();
 		tests.add(new TestCase<String, Integer>(1, test1File, 13));
+		tests.add(new TestCase<String, Integer>(2, test1File, 1));
+		tests.add(new TestCase<String, Integer>(2, test2File, 36));
 		return tests;
 	}
 
@@ -31,10 +34,16 @@ public class RopeBridge extends RunPuzzle {
 	@Override
 	public Object doProcessing(int section, Object input) {
 		String filename = (String)input;
-		Rope rope = new Rope();
+		Rope rope;
+		if (section == 1) {
+			rope = new Rope(2, this.debug);
+		}
+		else {
+			rope = new Rope(10, this.debug);
+		}
 		
 		ArrayList<Point> tailHistory = new ArrayList<Point>();
-		tailHistory.add(new Point(rope.tail.x, rope.tail.y));
+		tailHistory.add(new Point(rope.getTail().x, rope.getTail().y));
 		
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -59,15 +68,15 @@ public class RopeBridge extends RunPuzzle {
 				
 				for (int i = 0; i < numSteps; i++) {
 					rope.moveHead(dir);
-					if (!isInHistory(tailHistory, rope.tail)) {
-						tailHistory.add(new Point(rope.tail.x, rope.tail.y));
+					if (!isInHistory(tailHistory, rope.getTail())) {
+						tailHistory.add(new Point(rope.getTail().x, rope.getTail().y));
 					}
 				}
 				
 				line = br.readLine();
 			} while (line != null);
 			br.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -89,42 +98,57 @@ public class RopeBridge extends RunPuzzle {
 	}
 	
 	private static class Rope {
-		Point head, tail;
+		Point[] points;
+		private boolean debug;
 		
-		public Rope() {
-			head = new Point();
-			tail = new Point();
+		public Rope(int numPoints, boolean debug) {
+			points = new Point[numPoints];
+			for (int i = 0; i < numPoints; i++) {
+				points[i] = new Point();
+			}
+			this.debug = debug;
 		}
 		
-		public void moveHead(Direction d) {
+		public void moveHead(Direction d) throws Exception {
 			switch (d) {
 			case Down:
-				head.y++;
+				points[0].y++;
 				break;
 			case Left:
-				head.x++;
+				points[0].x--;
 				break;
 			case Right:
-				head.x--;
+				points[0].x++;
 				break;
 			case Up:
-				head.y--;
+				points[0].y--;
 				break;
 			}
-			moveTail();
+			for (int i = 1; i < points.length; i++) moveTail(i, debug);
 		}
 		
-		private void moveTail() {
-			if (head.x == tail.x && Math.abs(head.y - tail.y) == 2) {
-				tail.y += (head.y - tail.y)/2;
+		private void moveTail(int i, boolean debug) throws Exception {
+			if (debug) System.out.println("Index " + i + ", Head (" + points[i - 1].x + ", " + points[i - 1].y + "), Tail (" + points[i].x + ", " + points[i].y + ")");
+			if (points[i - 1].x == points[i].x && Math.abs(points[i - 1].y - points[i].y) == 2) {
+				points[i].y += (points[i - 1].y - points[i].y)/2;
 			}
-			else if (head.y == tail.y && Math.abs(head.x - tail.x) == 2) {
-				tail.x += (head.x - tail.x)/2;
+			else if (points[i - 1].y == points[i].y && Math.abs(points[i - 1].x - points[i].x) == 2) {
+				points[i].x += (points[i - 1].x - points[i].x)/2;
 			}
-			else if (Math.abs(head.x - tail.x) + Math.abs(head.y - tail.y) == 3) {
-				tail.x += (head.x - tail.x)/Math.abs(head.x - tail.x);
-				tail.y += (head.y - tail.y)/Math.abs(head.y - tail.y);
+			else if (Math.abs(points[i - 1].x - points[i].x) + Math.abs(points[i - 1].y - points[i].y) >= 3) {
+				points[i].x += (points[i - 1].x - points[i].x)/Math.abs(points[i - 1].x - points[i].x);
+				points[i].y += (points[i - 1].y - points[i].y)/Math.abs(points[i - 1].y - points[i].y);
 			}
+			if (debug) System.out.println("\tNew tail (" + points[i].x + ", " + points[i].y + ")");
+			if (debug) {
+				if (Math.abs(points[i - 1].x - points[i].x) > 1 || Math.abs(points[i - 1].y - points[i].y) > 1) {
+					throw new Exception();
+				}
+			}
+		}
+		
+		public Point getTail() {
+			return points[points.length - 1];
 		}
 		
 		public static enum Direction {
@@ -133,6 +157,7 @@ public class RopeBridge extends RunPuzzle {
 	}
 
 	static String test1File = "src\\Year2022\\day09\\data\\test1File";
+	static String test2File = "src\\Year2022\\day09\\data\\test2File";
 	static String puzzleFile = "src\\Year2022\\day09\\data\\puzzleFile";
 
 }
