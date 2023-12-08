@@ -8,6 +8,7 @@ public abstract class RunPuzzle {
 	String dayTitle;
 	Object puzzleInput;
 	protected String defaultOutputIndent = "\t\t\t\t";
+	protected boolean debug = false;
 	
 	public abstract ArrayList<TestCase> createTestCases();
 	public abstract void printResult(Object result);
