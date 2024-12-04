@@ -9,7 +9,6 @@ import tools.TestCase;
 public class SomeAssemblyRequired extends tools.RunPuzzle {
 	public SomeAssemblyRequired(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static void main (String[] args) {

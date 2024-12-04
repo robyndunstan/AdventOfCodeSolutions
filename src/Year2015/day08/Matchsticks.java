@@ -10,7 +10,6 @@ import tools.TestCase;
 public class Matchsticks extends tools.RunPuzzle {
 	public Matchsticks(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static void main(String[] args) {
@@ -47,6 +46,9 @@ public class Matchsticks extends tools.RunPuzzle {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+		finally {
+			br.close();
 		}
 	}
 	

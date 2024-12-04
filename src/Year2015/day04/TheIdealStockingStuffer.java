@@ -1,12 +1,8 @@
 package Year2015.day04;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-import Year2015.day03.PerfectlySphericalHousesInAVacuum;
 import tools.RunPuzzle;
 import tools.TestCase;
 
@@ -15,7 +11,6 @@ public class TheIdealStockingStuffer extends tools.RunPuzzle {
 	
 	public TheIdealStockingStuffer(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 
 	public static void main(String[] args) {
@@ -27,7 +22,6 @@ public class TheIdealStockingStuffer extends tools.RunPuzzle {
 		byte[] inputByte = null;
 		byte[] outputByte = null;
 		ByteBuffer outputBuffer = null;
-		ByteBuffer outputDup = null;
 
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");

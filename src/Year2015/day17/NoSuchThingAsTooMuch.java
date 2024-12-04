@@ -1,9 +1,7 @@
 package Year2015.day17;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import Year2015.day16.AuntSue;
 import tools.RunPuzzle;
 import tools.TestCase;
 

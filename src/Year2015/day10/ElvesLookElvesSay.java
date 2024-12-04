@@ -12,7 +12,6 @@ public class ElvesLookElvesSay extends RunPuzzle {
 
 	public ElvesLookElvesSay(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -67,7 +66,6 @@ public class ElvesLookElvesSay extends RunPuzzle {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -8,7 +8,6 @@ import tools.TestCase;
 public class DoesntHeHaveInternElvesForThis extends tools.RunPuzzle {
 	public DoesntHeHaveInternElvesForThis(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 
 	public static void main(String[] args) {

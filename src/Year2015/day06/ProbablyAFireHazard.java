@@ -9,7 +9,6 @@ import tools.TestCase;
 public class ProbablyAFireHazard extends tools.RunPuzzle {
 	public ProbablyAFireHazard(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static void main(String[] args) {
@@ -73,20 +72,10 @@ public class ProbablyAFireHazard extends tools.RunPuzzle {
 		public int getLight(int x, int y) {
 			return grid[x][y];
 		}
-		public int getLight(Point p) {
-			return getLight(p.x, p.y);
-		}
-		
 		public void setLight(int x, int y, int v) {
 			grid[x][y] = v;
 		}
-		public void setLight(Point p, int v) {
-			setLight(p.x, p.y, v);
-		}
-		
-		public void changeLightLevel(Point p, int v) {
-			changeLightLevel(p.x, p.y, v);
-		}
+
 		public void changeLightLevel(int x, int y, int v) {
 			grid[x][y] += v;
 			if (grid[x][y] < 0) grid[x][y] = 0;
@@ -126,12 +115,7 @@ public class ProbablyAFireHazard extends tools.RunPuzzle {
 		public Command command;
 		public Point start;
 		public Point end;
-		
-		public Instruction() {
-			command = Command.TURN_OFF;
-			start = new Point();
-			end = new Point();
-		}
+
 		public Instruction(String input) {
 			parseInstruction(input);
 		}

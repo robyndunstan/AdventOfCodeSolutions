@@ -11,7 +11,6 @@ public class CorporatePolicy extends RunPuzzle {
 
 	public CorporatePolicy(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -30,7 +29,6 @@ public class CorporatePolicy extends RunPuzzle {
 	@Override
 	public Object doProcessing(int section, Object input) {
 		String oldPassword = (String)input;
-		boolean isValid = false;
 		String newPassword = getNewPassword(oldPassword);
 		while (!isValid(newPassword) && !newPassword.equals(oldPassword)) {
 			newPassword = getNewPassword(newPassword);
