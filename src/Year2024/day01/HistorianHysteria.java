@@ -24,6 +24,7 @@ public class HistorianHysteria extends tools.RunPuzzle {
     public ArrayList<TestCase> createTestCases() {
         ArrayList<TestCase> tests = new ArrayList<TestCase>();
         tests.add(new TestCase<String, Integer>(1, "src\\Year2024\\day01\\data\\test1File", 11));
+        tests.add(new TestCase<String, Integer>(2, "src\\Year2024\\day01\\data\\test1File", 31));
         return tests;
     }
 
@@ -37,24 +38,25 @@ public class HistorianHysteria extends tools.RunPuzzle {
         String fileName = (String)input;
         FileController file = new FileController(fileName);
 
-        if (section == 1) {
-            ArrayList<Integer> left = new ArrayList<Integer>();
-            ArrayList<Integer> right = new ArrayList<Integer>();
-            try {
-                file.openInput();
-                String line = file.readLine().trim();
-                while (line != null) {
-                    int splitIndex = line.indexOf(' ');
-                    String leftString = line.substring(0, splitIndex).trim();
-                    String rightString = line.substring(splitIndex).trim();
+        ArrayList<Integer> left = new ArrayList<Integer>();
+        ArrayList<Integer> right = new ArrayList<Integer>();
+        try {
+            file.openInput();
+            String line = file.readLine().trim();
+            while (line != null) {
+                int splitIndex = line.indexOf(' ');
+                String leftString = line.substring(0, splitIndex).trim();
+                String rightString = line.substring(splitIndex).trim();
 
-                    left.add(Integer.parseInt(leftString));
-                    right.add(Integer.parseInt(rightString));
+                left.add(Integer.parseInt(leftString));
+                right.add(Integer.parseInt(rightString));
 
-                    line = file.readLine();
-                }
-                file.closeFile();
+                line = file.readLine();
                 
+            }
+            file.closeFile();
+
+            if (section == 1) {
                 IntegerSort sorter = new IntegerSort();
                 left.sort(sorter);
                 right.sort(sorter);
@@ -65,16 +67,23 @@ public class HistorianHysteria extends tools.RunPuzzle {
                 }
                 return totalDistance;
             }
-            catch (IOException e) {
-                try {
-                    file.closeFile();
-                } catch (IOException ex) {
+            else {
+                int similarityScore = 0;
+                for (int testNum : left) {
+                    int testCount = 0;
+                    for (int matchNum: right) {
+                        if (testNum == matchNum) testCount++;
+                    }
+                    similarityScore += testNum * testCount;
                 }
-                e.printStackTrace();
-			    return null;
+                return similarityScore;
             }
         }
-        else {
+        catch (IOException ex) {
+            try {
+                file.closeFile();
+            } catch (IOException ex2) {}
+            ex.printStackTrace();
             return null;
         }
     }
