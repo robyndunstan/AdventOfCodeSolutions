@@ -2,6 +2,7 @@ package Year2024.day01;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import tools.FileController;
 import tools.RunPuzzle;
@@ -37,19 +38,38 @@ public class HistorianHysteria extends tools.RunPuzzle {
         FileController file = new FileController(fileName);
 
         if (section == 1) {
+            ArrayList<Integer> left = new ArrayList<Integer>();
+            ArrayList<Integer> right = new ArrayList<Integer>();
             try {
                 file.openInput();
                 String line = file.readLine().trim();
                 while (line != null) {
-                    // do things
+                    int splitIndex = line.indexOf(' ');
+                    String leftString = line.substring(0, splitIndex).trim();
+                    String rightString = line.substring(splitIndex).trim();
+
+                    left.add(Integer.parseInt(leftString));
+                    right.add(Integer.parseInt(rightString));
 
                     line = file.readLine();
                 }
                 file.closeFile();
-                // do more things
-                return null;
+                
+                IntegerSort sorter = new IntegerSort();
+                left.sort(sorter);
+                right.sort(sorter);
+                
+                int totalDistance = 0;
+                for (int i = 0; i < Math.min(left.size(), right.size()); i++) {
+                    totalDistance += Math.abs(left.get(i) - right.get(i));
+                }
+                return totalDistance;
             }
             catch (IOException e) {
+                try {
+                    file.closeFile();
+                } catch (IOException ex) {
+                }
                 e.printStackTrace();
 			    return null;
             }
@@ -59,4 +79,12 @@ public class HistorianHysteria extends tools.RunPuzzle {
         }
     }
     
+    private class IntegerSort implements Comparator<Integer> {
+
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            return o1 - o2;
+        }
+        
+    }
 }

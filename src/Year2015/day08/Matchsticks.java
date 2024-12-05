@@ -2,6 +2,7 @@ package Year2015.day08;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import tools.RunPuzzle;
@@ -33,8 +34,9 @@ public class Matchsticks extends tools.RunPuzzle {
 	}
 	
 	public void processFile() {
+		BufferedReader br = null;
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(filename));
+			br = new BufferedReader(new FileReader(filename));
 			
 			String line = br.readLine();
 			do {
@@ -48,7 +50,10 @@ public class Matchsticks extends tools.RunPuzzle {
 			e.printStackTrace();
 		}
 		finally {
-			br.close();
+                    try {
+                        br.close();
+                    } catch (IOException ex) {
+                    }
 		}
 	}
 	

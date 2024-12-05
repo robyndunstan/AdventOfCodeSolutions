@@ -1,5 +1,6 @@
 package Year2015.day04;
 
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
@@ -19,8 +20,8 @@ public class TheIdealStockingStuffer extends tools.RunPuzzle {
 	}
 	
 	private ByteBuffer getMd5Hash(String input) {
-		byte[] inputByte = null;
-		byte[] outputByte = null;
+		byte[] inputByte;
+		byte[] outputByte;
 		ByteBuffer outputBuffer = null;
 
 		try {
@@ -28,7 +29,6 @@ public class TheIdealStockingStuffer extends tools.RunPuzzle {
 			inputByte = input.getBytes(charset);
 			outputByte = md.digest(inputByte);
 			outputBuffer = ByteBuffer.wrap(outputByte);
-			outputDup = outputBuffer.duplicate();
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -39,7 +39,7 @@ public class TheIdealStockingStuffer extends tools.RunPuzzle {
 	
 	private int getFiveInitialZeros(String input) {
 		int count = 0;
-		ByteBuffer buffer = null;
+		ByteBuffer buffer;
 		do {
 			count++;
 			buffer = getMd5Hash(input + count);
@@ -49,7 +49,7 @@ public class TheIdealStockingStuffer extends tools.RunPuzzle {
 	
 	private int getSixInitialZeros(String input) {
 		int count = 0;
-		ByteBuffer buffer = null;
+		ByteBuffer buffer;
 		do {
 			count++;
 			buffer = getMd5Hash(input + count);

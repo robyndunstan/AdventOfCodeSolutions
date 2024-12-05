@@ -31,7 +31,7 @@ public class FileController {
 	/**
 	 * File getters/setters
 	 */
-	public void setFile(File f) {
+	public final void setFile(File f) {
 		if (f == null) {
 			try {
 				closeFile();
@@ -52,7 +52,7 @@ public class FileController {
 			System.out.println(f.getAbsolutePath() + " is not a valid file");
 		}
 	}
-	public void setFile(String fname) {
+	public final void setFile(String fname) {
 		File tempF = new File(fname);
 		setFile(tempF);
 	}
@@ -139,20 +139,10 @@ public class FileController {
 	 * File Status
 	 */
 	public boolean isOpenOutput() {
-		if (pw == null) {
-			return false;
-		}
-		else {
-			return true;
-		}
+            return pw != null;
 	}
 	public boolean isOpenInput() {
-		if (br == null) {
-			return false;
-		}
-		else {
-			return true;
-		}
+		return br != null;
 	}
 	public int getLineNumber() {
 		return lineCount;

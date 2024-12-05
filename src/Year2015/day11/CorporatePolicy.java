@@ -38,7 +38,6 @@ public class CorporatePolicy extends RunPuzzle {
 		}
 		else {
 			oldPassword = newPassword;
-			isValid = false;
 			newPassword = getNewPassword(oldPassword);
 			while (!isValid(newPassword) && !newPassword.equals(oldPassword)) {
 				newPassword = getNewPassword(newPassword);
