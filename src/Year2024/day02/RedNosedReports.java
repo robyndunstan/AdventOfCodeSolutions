@@ -2,7 +2,6 @@ package Year2024.day02;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import tools.FileController;
 import tools.RunPuzzle;
