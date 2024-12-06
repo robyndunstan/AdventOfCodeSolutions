@@ -52,32 +52,8 @@ public class HistorianHysteria extends tools.RunPuzzle {
                 right.add(Integer.parseInt(rightString));
 
                 line = file.readLine();
-                
             }
             file.closeFile();
-
-            if (section == 1) {
-                IntegerSort sorter = new IntegerSort();
-                left.sort(sorter);
-                right.sort(sorter);
-                
-                int totalDistance = 0;
-                for (int i = 0; i < Math.min(left.size(), right.size()); i++) {
-                    totalDistance += Math.abs(left.get(i) - right.get(i));
-                }
-                return totalDistance;
-            }
-            else {
-                int similarityScore = 0;
-                for (int testNum : left) {
-                    int testCount = 0;
-                    for (int matchNum: right) {
-                        if (testNum == matchNum) testCount++;
-                    }
-                    similarityScore += testNum * testCount;
-                }
-                return similarityScore;
-            }
         }
         catch (IOException ex) {
             try {
@@ -85,6 +61,29 @@ public class HistorianHysteria extends tools.RunPuzzle {
             } catch (IOException ex2) {}
             ex.printStackTrace();
             return null;
+        }
+
+        if (section == 1) {
+            IntegerSort sorter = new IntegerSort();
+            left.sort(sorter);
+            right.sort(sorter);
+            
+            int totalDistance = 0;
+            for (int i = 0; i < Math.min(left.size(), right.size()); i++) {
+                totalDistance += Math.abs(left.get(i) - right.get(i));
+            }
+            return totalDistance;
+        }
+        else {
+            int similarityScore = 0;
+            for (int testNum : left) {
+                int testCount = 0;
+                for (int matchNum: right) {
+                    if (testNum == matchNum) testCount++;
+                }
+                similarityScore += testNum * testCount;
+            }
+            return similarityScore;
         }
     }
     
