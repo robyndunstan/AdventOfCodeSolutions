@@ -24,7 +24,7 @@ public class CeresSearch extends tools.RunPuzzle {
     public ArrayList<TestCase> createTestCases() {
         ArrayList<TestCase> tests = new ArrayList<TestCase>();
         tests.add(new TestCase<String, Integer>(1, "src\\Year2024\\day04\\data\\test1File", 18));
-        tests.add(new TestCase<String, Integer>(2, "src\\Year2024\\day04\\data\\test1File", 0));
+        tests.add(new TestCase<String, Integer>(2, "src\\Year2024\\day04\\data\\test1File", 9));
         return tests;
     }
 
@@ -87,8 +87,44 @@ public class CeresSearch extends tools.RunPuzzle {
             }
             return foundWords;
         }
-        else {
-            return null;
+        else { // < 1862
+            int foundWords = 0;
+            String targetWord = "MAS";
+            for (int i = 1; i < wordSearch.size() - 1; i++) {
+                if (debug) System.out.println("Searching row " + i);
+                int targetSearchIndex = wordSearch.get(i).indexOf(targetWord.charAt(1));
+                if (debug) System.out.println("Found middle character at " + targetSearchIndex);
+                while (targetSearchIndex > -1) {
+                    Point targetSearchPoint = new Point(i, targetSearchIndex);
+
+                    if ((CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.N), Direction.S)
+                            || CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.S), Direction.N))
+                        && (CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.E), Direction.W)
+                            || CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.W), Direction.E))) {
+                                foundWords++;
+                                if (debug) System.out.println("Found orthogonal");
+                    }
+
+                    if ((CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.NW), Direction.SE)
+                            || CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.SE), Direction.NW))
+                        && (CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.NE), Direction.SW)
+                            || CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.SW), Direction.NE))) {
+                                foundWords++;
+                                if (debug) System.out.println("Found diagonal");
+                    }
+                    if (targetSearchIndex < wordSearch.get(i).size() - 1) {
+                        int previousTargetSearchIndex = targetSearchIndex;
+                        targetSearchIndex = wordSearch.get(i).subList(previousTargetSearchIndex + 1, wordSearch.get(i).size()).indexOf(targetWord.charAt(1));
+                        if (targetSearchIndex > -1) targetSearchIndex += previousTargetSearchIndex + 1;
+                        if (debug) System.out.println("Next search at " + targetSearchIndex);
+                    }
+                    else 
+                        targetSearchIndex = -1;
+                    if (debug) System.out.println(foundWords + " total words found after searching point (" + targetSearchPoint.x + ", " + targetSearchPoint.y + ")");
+                }
+            }
+
+            return foundWords;
         }
     }
 
