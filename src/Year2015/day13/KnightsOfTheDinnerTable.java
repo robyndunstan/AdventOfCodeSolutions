@@ -26,7 +26,7 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		log("\t\t\t\t" + (Integer)result);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 						newArr.set(j, arrange.get(i));
 						int newHappy = sumHappiness(newArr, happiness);
 						if (newHappy > sumHappy) {
-							if (debug) System.out.println("Switched " + i + " and " + j + " - new happiness is " + newHappy);
+							logDebug("Switched " + i + " and " + j + " - new happiness is " + newHappy);
 							sumHappy = newHappy;
 							arrange = newArr;
 							changed = true;
@@ -107,12 +107,13 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 		}
 		
 		if (debug) {
-			System.out.print("Test arrangement: ");
+			StringBuilder sb = new StringBuilder();
+			sb.append("Test arrangement: ");
 			for (int i = 0; i < arr.size(); i++) {
-				if (i > 0) System.out.print(", ");
-				System.out.print(arr.get(i));
+				if (i > 0) sb.append(", ");
+				sb.append(arr.get(i));
 			}
-			System.out.println(" with happiness " + sum);
+			logDebug(sb.toString() + " with happiness " + sum);
 		}
 		
 		return sum;
@@ -128,16 +129,13 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 		}
 		
 		br.close();
-		
-		if (debug) {
-			System.out.println("Number of guests: " + guests.size());
-		}
+		logDebug("Number of guests: " + guests.size());
 	}
 	
 	private void parseLine(String line, HashSet<String> guests, HashMap<String, HashMap<String, Integer>> happiness) {
 		int i1 = line.indexOf(" ");
 		String currGuest = line.substring(0, i1);
-		if (debug) System.out.println("Guest " + currGuest);
+		logDebug("Guest " + currGuest);
 		guests.add(currGuest);
 		
 		if (!happiness.containsKey(currGuest)) {
@@ -146,7 +144,7 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 		
 		i1 = line.lastIndexOf(" ");
 		String nextTo = line.substring(i1 + 1, line.length() - 1);
-		if (debug) System.out.println("Next to " + nextTo);
+		logDebug("Next to " + nextTo);
 		
 		boolean positive;
 		if (line.contains("gain")) {
@@ -161,7 +159,7 @@ public class KnightsOfTheDinnerTable extends RunPuzzle {
 		int i2 = line.indexOf("happiness");
 		int happy = Integer.parseInt(line.substring(i1 + 4, i2).trim());
 		if (!positive) happy *= -1;
-		if (debug) System.out.println("Happiness " + positive + " " + happy);
+		logDebug("Happiness " + positive + " " + happy);
 		
 		happiness.get(currGuest).put(nextTo, happy);
 	}

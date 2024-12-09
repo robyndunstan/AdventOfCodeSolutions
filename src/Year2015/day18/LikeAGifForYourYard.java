@@ -22,7 +22,7 @@ public class LikeAGifForYourYard extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		log("\t\t\t\t" + (Integer)result);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class LikeAGifForYourYard extends RunPuzzle {
 		
 		for (int i = 0; i < steps; i++) {
 			lights = doStep(section, lights);
-			if (debug) System.out.println(i + ": " + countLightsOn(lights));
+			logDebug(i + ": " + countLightsOn(lights));
 		}
 		
 		return countLightsOn(lights);
@@ -94,7 +94,7 @@ public class LikeAGifForYourYard extends RunPuzzle {
 			nextLights.get(lights.size() - 1).set(0, true);
 			nextLights.get(lights.size() - 1).set(lights.get(lights.size() - 1).size() - 1, true);
 		}
-		if (debug) System.out.println("\t" + countLightsOn(nextLights));
+		logDebug("\t" + countLightsOn(nextLights));
 		
 		return nextLights;
 	}
@@ -106,7 +106,7 @@ public class LikeAGifForYourYard extends RunPuzzle {
 				if ((i != x || j != y) && lights.get(i).get(j)) count++;
 			}
 		}
-		if (debug) System.out.println("(" + x + ", " + y + ") => " + count + " in (" + Math.max(0,  x - 1) + ", " + Math.max(0,  y - 1) + ") to (" + Math.min(lights.size() - 1, x + 1) + ", " + Math.min(lights.get(Math.min(lights.size() - 1,  x + 1)).size() - 1, y + 1) + ")");
+		logDebug("(" + x + ", " + y + ") => " + count + " in (" + Math.max(0,  x - 1) + ", " + Math.max(0,  y - 1) + ") to (" + Math.min(lights.size() - 1, x + 1) + ", " + Math.min(lights.get(Math.min(lights.size() - 1,  x + 1)).size() - 1, y + 1) + ")");
 		return count;
 	}
 	

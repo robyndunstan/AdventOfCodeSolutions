@@ -12,7 +12,7 @@ public class CeresSearch extends tools.RunPuzzle {
 
     public CeresSearch(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
-        debug = false;
+        debug = true;
     }
 
     public static void main(String[] args) {
@@ -96,6 +96,12 @@ public class CeresSearch extends tools.RunPuzzle {
                 if (debug) System.out.println("Found middle character at " + targetSearchIndex);
                 while (targetSearchIndex > -1) {
                     Point targetSearchPoint = new Point(i, targetSearchIndex);
+
+                    if (debug) {
+                        System.out.println("\t" + GetCharacter(GetNextPoint(targetSearchPoint, Direction.NW)) + GetCharacter(GetNextPoint(targetSearchPoint, Direction.N)) + GetCharacter(GetNextPoint(targetSearchPoint, Direction.NE)));
+                        System.out.println("\t" + GetCharacter(GetNextPoint(targetSearchPoint, Direction.W)) + GetCharacter(targetSearchPoint) + GetCharacter(GetNextPoint(targetSearchPoint, Direction.E)));
+                        System.out.println("\t" + GetCharacter(GetNextPoint(targetSearchPoint, Direction.SW)) + GetCharacter(GetNextPoint(targetSearchPoint, Direction.S)) + GetCharacter(GetNextPoint(targetSearchPoint, Direction.SE)));
+                    }
 
                     if ((CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.N), Direction.S)
                             || CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.S), Direction.N))

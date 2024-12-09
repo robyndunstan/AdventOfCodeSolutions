@@ -189,11 +189,11 @@ public class SomeAssemblyRequired extends tools.RunPuzzle {
 	public void printResult(Object result) {
 		HashMap<String, Integer> r = (HashMap<String, Integer>)result;
 		if (r.containsKey("a")) {
-			System.out.println("\t\t\t\ta: " + r.get("a"));
+			log("\t\t\t\ta: " + r.get("a"));
 		}
 		else {
 			for (String s : r.keySet()) {
-				System.out.println("\t\t\t\t" + s + ": " + r.get(s));
+				log("\t\t\t\t" + s + ": " + r.get(s));
 			}
 		}
 	}

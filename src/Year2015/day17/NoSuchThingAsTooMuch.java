@@ -23,13 +23,13 @@ public class NoSuchThingAsTooMuch extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		log("\t\t\t\t" + (Integer)result);
 	}
 
 	@Override
 	public Object doProcessing(int section, Object input) {
 		PuzzleInput i = (PuzzleInput)input;
-		if (debug) System.out.println(i.total + " quantity and " + i.containers.length + " containers");
+		logDebug(i.total + " quantity and " + i.containers.length + " containers");
 		
 		ArrayList<Integer> availableMaster = new ArrayList<Integer>();
 		for (int c : i.containers) {
@@ -52,7 +52,7 @@ public class NoSuchThingAsTooMuch extends RunPuzzle {
 	
 	private void fillOneContainer(ArrayList<Integer> available, int remaining, int containersUsed) {
 		if (remaining == 0) {
-			if (debug) System.out.println("Used " + containersUsed + " containers");
+			logDebug("Used " + containersUsed + " containers");
 			totalCount++;
 			if (containersUsed == minContainersUsed) {
 				minContainersCount++;
@@ -61,7 +61,7 @@ public class NoSuchThingAsTooMuch extends RunPuzzle {
 				minContainersUsed = containersUsed;
 				minContainersCount = 1;
 			}
-			if (debug) System.out.println("Total: " + totalCount + " Min Containers: " + minContainersUsed + " with count: " + minContainersCount);
+			logDebug("Total: " + totalCount + " Min Containers: " + minContainersUsed + " with count: " + minContainersCount);
 		}
 		else {
 			for (int i = 0; i < available.size(); i++) {
@@ -71,7 +71,7 @@ public class NoSuchThingAsTooMuch extends RunPuzzle {
 					
 					for (int j = i; j >= 0; j--) clone.remove(j);
 					
-					if (debug) System.out.println("Filling container " + c + " with " + (containersUsed + 1) + " containers used and " + (remaining - c) + " remaining");
+					logDebug("Filling container " + c + " with " + (containersUsed + 1) + " containers used and " + (remaining - c) + " remaining");
 					fillOneContainer(clone, remaining - c, containersUsed + 1);
 				}
 			}

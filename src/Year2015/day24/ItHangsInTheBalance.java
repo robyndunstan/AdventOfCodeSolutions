@@ -25,7 +25,7 @@ public class ItHangsInTheBalance extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Long)result);
+		log("\t\t\t\t" + (Long)result);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class ItHangsInTheBalance extends RunPuzzle {
 			packages.add(p);
 		}
 		int targetSum = totalSum / (section == 1 ? 3 : 4);
-		if (debug) System.out.println("Target sum: " + targetSum);
+		logDebug("Target sum: " + targetSum);
 		
 		minQty = Integer.MAX_VALUE;
 		minEnt = Long.MAX_VALUE;
@@ -49,7 +49,7 @@ public class ItHangsInTheBalance extends RunPuzzle {
 		for (int i = 0; i < packages.size(); i++) {
 			int p = packages.get(i);
 			if (targetSum == groupSum + p) {
-				if (debug) System.out.println("Matched sum on " + (groupQty + 1) + " packages with entanglement " + (groupEnt * p));
+				logDebug("Matched sum on " + (groupQty + 1) + " packages with entanglement " + (groupEnt * p));
 				if (minQty == groupQty + 1) {
 					minEnt = Math.min(minEnt, groupEnt * p);
 				}
@@ -59,7 +59,7 @@ public class ItHangsInTheBalance extends RunPuzzle {
 				}
 			}
 			else if (targetSum > groupSum + p && minQty >= groupQty + 1) {
-				if (debug) System.out.println("Add package " + p + " to group of " + groupQty + " packages with sum " + groupSum + " and entanglement " + groupEnt);
+				logDebug("Add package " + p + " to group of " + groupQty + " packages with sum " + groupSum + " and entanglement " + groupEnt);
 				addPackage(groupQty + 1, groupEnt * p, groupSum + p, packages.subList(i + 1, packages.size()), targetSum);
 			}
 		}

@@ -24,7 +24,7 @@ public class MedicineForRudolph extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		log("\t\t\t\t" + (Integer)result);
 	}
 
 	@Override
@@ -61,21 +61,21 @@ public class MedicineForRudolph extends RunPuzzle {
 		}
 		else {
 			int steps = 0;
-			StringBuffer molecule = new StringBuffer(p.molecule);
+			StringBuilder molecule = new StringBuilder(p.molecule);
 			while (molecule.length() > 0) {
-				if (debug) System.out.println("Molecule: " + molecule.toString());
+				logDebug("Molecule: " + molecule.toString());
 				for (Reaction rx : reactions) {
 					if (rx.input.equals("e") && rx.output.equals(molecule.toString())) {
-						if (debug) System.out.println("Step " + (1 + steps) + ": Do reaction " + rx.output + " => " + rx.input);
+						logDebug("Step " + (1 + steps) + ": Do reaction " + rx.output + " => " + rx.input);
 						return ++steps;
 					}
 					else if (!rx.input.equals("e")) {
 						int startIndex = molecule.indexOf(rx.output);
 						while (startIndex > -1) {
 							steps++;
-							if (debug) System.out.println("Step " + steps + ": Do reaction " + rx.output + " => " + rx.input);
+							logDebug("Step " + steps + ": Do reaction " + rx.output + " => " + rx.input);
 							molecule.replace(startIndex, startIndex + rx.output.length(), rx.input);
-							if (debug) System.out.println("\tNew molecule: " + molecule.toString());
+							logDebug("\tNew molecule: " + molecule.toString());
 							startIndex = molecule.indexOf(rx.output, startIndex);
 						}
 					}

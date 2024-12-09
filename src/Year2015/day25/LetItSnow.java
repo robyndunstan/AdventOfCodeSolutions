@@ -59,7 +59,7 @@ public class LetItSnow extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Long)result);
+		log("\t\t\t\t" + (Long)result);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class LetItSnow extends RunPuzzle {
 				codes.put(1, new HashMap<Integer, Long>());
 				codes.get(1).put(1, 20151125l);
 			}
-			if (debug) System.out.println("(" + p.x + ", " + p.y + ") " + isCalculated(p));
+			logDebug("(" + p.x + ", " + p.y + ") " + isCalculated(p));
 			if (isCalculated(p)) {
 				return codes.get(p.x).get(p.y);
 			}
@@ -89,11 +89,11 @@ public class LetItSnow extends RunPuzzle {
 						testPoint.x = 1;
 					}
 				}
-				if (debug) System.out.println("Closest point is (" + testPoint.x + ", " + testPoint.y + ")");
-				if (debug) System.out.println("Target point is (" + p.x + ", " + p.y + ") " + isCalculated(p));
+				logDebug("Closest point is (" + testPoint.x + ", " + testPoint.y + ")");
+				logDebug("Target point is (" + p.x + ", " + p.y + ") " + isCalculated(p));
 				while (testPoint.x != p.x || testPoint.y != p.y) {
 					testPoint = calculateForNextPoint(testPoint);
-					if (debug) System.out.println("Calculated point (" + testPoint.x + ", " + testPoint.y + ")");
+					logDebug("Calculated point (" + testPoint.x + ", " + testPoint.y + ")");
 				}
 				return codes.get(p.x).get(p.y);
 			}
@@ -112,12 +112,12 @@ public class LetItSnow extends RunPuzzle {
 		if (prev.x > 1) {
 			next.x = prev.x - 1;
 			next.y = prev.y + 1;
-			if (debug) System.out.println("From (" + prev.x + ", " + prev.y + ") to (" + next.x + ", " + next.y + ")");
+			logDebug("From (" + prev.x + ", " + prev.y + ") to (" + next.x + ", " + next.y + ")");
 		}
 		else {
 			next.x = prev.y + 1;
 			next.y = 1;
-			if (debug) System.out.println("From (" + prev.x + ", " + prev.y + ") to new line (" + next.x + ", " + next.y + ")");
+			logDebug("From (" + prev.x + ", " + prev.y + ") to new line (" + next.x + ", " + next.y + ")");
 		}
 		
 		if (!codes.containsKey(next.x)) {

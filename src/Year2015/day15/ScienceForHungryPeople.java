@@ -23,7 +23,7 @@ public class ScienceForHungryPeople extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		log("\t\t\t\t" + (Integer)result);
 	}
 
 	@Override
@@ -70,11 +70,9 @@ public class ScienceForHungryPeople extends RunPuzzle {
 			int score = Math.max(capacity, 0) * Math.max(durability, 0) * Math.max(flavor, 0) * Math.max(texture, 0);
 			if (score > maxScore) {
 				maxScore = score;
-				if (debug) {
-					System.out.println("New score " + score);
-					for (Ingredient i : ingredients) {
-						System.out.println("\t" + i.name + " " + i.quantity);
-					}
+				logDebug("New score " + score);
+				for (Ingredient i : ingredients) {
+					logDebug("\t" + i.name + " " + i.quantity);
 				}
 			}
 			maxScore = Math.max(score, maxScore);
@@ -102,9 +100,7 @@ public class ScienceForHungryPeople extends RunPuzzle {
 		public Ingredient(String input) {
 			this();
 			parseInput(input);
-			if (debug) {
-				System.out.println(name + ": " + capacity + ", " + durability + ", " + flavor + ", " + texture + ", " + calories);
-			}
+			logDebug(name + ": " + capacity + ", " + durability + ", " + flavor + ", " + texture + ", " + calories);
 		}
 		
 		private void parseInput(String input) {

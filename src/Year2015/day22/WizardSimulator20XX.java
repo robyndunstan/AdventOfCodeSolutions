@@ -14,19 +14,19 @@ public class WizardSimulator20XX extends RunPuzzle {
 
 	@Override
 	public ArrayList<TestCase> createTestCases() {
-		return new ArrayList<TestCase>();
+		return new ArrayList<>();
 	}
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		log("\t\t\t\t" + (Integer)result);
 	}
 
 	@Override
 	public Object doProcessing(int section, Object input) {
 		Character boss = (Character)input;
 		Character me = new Character(50, 0, 0, 500);
-		ArrayList<Effect> activeEffects = new ArrayList<Effect>();
+		ArrayList<Effect> activeEffects = new ArrayList<>();
 		Spell[] castable = {Spell.Drain, Spell.Magic_Missile, Spell.Poison, Spell.Recharge, Spell.Shield};
 		int minManaCost = Integer.MAX_VALUE;
 		Effect levelHard = new Effect(Spell.Level_Hard, 1);
@@ -35,9 +35,9 @@ public class WizardSimulator20XX extends RunPuzzle {
 		Game start = new Game(activeEffects, me, boss);
 		games.add(start);
 		
-		while (games.size() > 0) {
-			if (debug) System.out.println(games.size() + " possible games");
-			ArrayList<Game> nextTurn = new ArrayList<Game>();
+		while (!games.isEmpty()) {
+			logDebug(games.size() + " possible games");
+			ArrayList<Game> nextTurn = new ArrayList<>();
 			for (Game g : games) {
 				if (section == 2) g.activeEffects.add(levelHard);
 				g.doStandby();
@@ -53,7 +53,7 @@ public class WizardSimulator20XX extends RunPuzzle {
 								}
 								else {
 									minManaCost = Math.min(g2.me.manaCost, minManaCost);
-									if (debug) System.out.println("I win using " + g2.me.manaCost + " mana (min " + minManaCost + ")");
+									logDebug("I win using " + g2.me.manaCost + " mana (min " + minManaCost + ")");
 								}
 							}
 						}
@@ -67,13 +67,13 @@ public class WizardSimulator20XX extends RunPuzzle {
 						}
 						else {
 							minManaCost = Math.min(g2.me.manaCost, minManaCost);
-							if (debug) System.out.println("I win using " + g2.me.manaCost + " mana (min " + minManaCost + ")");
+							logDebug("I win using " + g2.me.manaCost + " mana (min " + minManaCost + ")");
 						}
 					}
 				}
 				else {
 					minManaCost = Math.min(g.me.manaCost, minManaCost);
-					if (debug) System.out.println("I win using " + g.me.manaCost + " mana (min " + minManaCost + ")");
+					logDebug("I win using " + g.me.manaCost + " mana (min " + minManaCost + ")");
 				}
 			}
 			games = nextTurn;

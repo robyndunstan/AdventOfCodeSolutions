@@ -19,7 +19,7 @@ public class InfiniteElvesAndInfiniteHouses extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		log("\t\t\t\t" + (Integer)result);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class InfiniteElvesAndInfiniteHouses extends RunPuzzle {
 				}
 			}
 			presents *= (section == 1 ? 10 : 11);
-			if (debug && house % 10000 == 0) System.out.println("House " + house + " gets " + presents + " presents");
+			if (house % 10000 == 0) logDebug("House " + house + " gets " + presents + " presents");
 		}
 		return house;
 	}

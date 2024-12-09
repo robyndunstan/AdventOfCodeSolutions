@@ -29,7 +29,7 @@ public class ReindeerOlympics extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		log("\t\t\t\t" + (Integer)result);
 	}
 
 	@Override
@@ -47,17 +47,15 @@ public class ReindeerOlympics extends RunPuzzle {
 			}
 			getLeadReindeer(reindeer).score++;
 			
-			if (debug) {
-				if (i % 100 == 0) {
-					System.out.println("Race second " + i);
-					for (Reindeer r : reindeer) {
-						System.out.println("\t" + r.name + " " + r.distance + " " + r.score);
-					}
+			if (i % 100 == 0) {
+				logDebug("Race second " + i);
+				for (Reindeer r : reindeer) {
+					logDebug("\t" + r.name + " " + r.distance + " " + r.score);
 				}
 			}
 		}
 		
-		if (debug) System.out.println("Winning reindeer is " + getLeadReindeer(reindeer).name);
+		logDebug("Winning reindeer is " + getLeadReindeer(reindeer).name);
 		if (section == 1) {
 			return getLeadReindeer(reindeer).distance;
 		}
@@ -100,7 +98,7 @@ public class ReindeerOlympics extends RunPuzzle {
 		}
 		
 		private void parseInput(String input) {
-			if (debug) System.out.println(input);
+			logDebug(input);
 			int endIndex = input.indexOf("km/s");
 			int startIndex = input.substring(0, endIndex - 1).lastIndexOf(" ");
 			this.speed = Integer.parseInt(input.substring(startIndex, endIndex).trim());
@@ -114,7 +112,7 @@ public class ReindeerOlympics extends RunPuzzle {
 			this.restTime = Integer.parseInt(input.substring(startIndex + 3, endIndex).trim());
 			
 			name = input.substring(0, input.indexOf(" "));
-			if (debug) System.out.println(name + ", speed = " + speed + ", run time = " + runTime + ", rest time = " + restTime);
+			logDebug(name + ", speed = " + speed + ", run time = " + runTime + ", rest time = " + restTime);
 		}
 		
 		private boolean isRunning(int time) {

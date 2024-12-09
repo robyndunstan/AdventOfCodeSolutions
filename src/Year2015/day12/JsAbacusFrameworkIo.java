@@ -6,11 +6,10 @@ import tools.RunPuzzle;
 import tools.TestCase;
 
 public class JsAbacusFrameworkIo extends RunPuzzle {
-	private static boolean debugSection1 = false;
-	private static boolean debugSection2 = false;
 
 	public JsAbacusFrameworkIo(int dayNumber, String dayTitle, Object puzzleInput) {
 		super(dayNumber, dayTitle, puzzleInput);
+		debug = false;
 	}
 
 	@Override
@@ -33,7 +32,7 @@ public class JsAbacusFrameworkIo extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		log("\t\t\t\t" + (Integer)result);
 	}
 
 	@Override
@@ -53,7 +52,7 @@ public class JsAbacusFrameworkIo extends RunPuzzle {
 	}
 	
 	private int sumAllNumbers(String json) {
-		if (debugSection1) System.out.println("Sum all numbers for string '" + json + "'");
+		logDebug("Sum all numbers for string '" + json + "'");
 		int sum = 0;
 		boolean negative = false;
 		String currNum = "";
@@ -61,15 +60,15 @@ public class JsAbacusFrameworkIo extends RunPuzzle {
 			char c = json.charAt(i);
 			if (c == '-') {
 				negative = true;
-				if (debugSection1) System.out.println("Found a negative number");
+				logDebug("Found a negative number");
 			}
 			else if (Character.isDigit(c)) {
-				if (debugSection1) System.out.println("Found a digit");
+				logDebug("Found a digit");
 				currNum += c;
-				if (debugSection1) System.out.println("Current number is " + currNum);
+				logDebug("Current number is " + currNum);
 			}
 			else {
-				if (debugSection1) System.out.println("Found end of number");
+				logDebug("Found end of number");
 				if (!currNum.isEmpty()) {
 					if (negative) {
 						sum -= Integer.parseInt(currNum);
@@ -78,14 +77,14 @@ public class JsAbacusFrameworkIo extends RunPuzzle {
 						sum += Integer.parseInt(currNum);
 					}
 				}
-				if (debugSection1) System.out.println("Current sum is " + sum);
+				logDebug("Current sum is " + sum);
 				
 				negative = false;
 				currNum = "";
 			}
 		}
 		
-		if (debugSection1) System.out.println("Found end of string");
+		logDebug("Found end of string");
 		if (!currNum.isEmpty()) {
 			if (negative) {
 				sum -= Integer.parseInt(currNum);
@@ -94,34 +93,34 @@ public class JsAbacusFrameworkIo extends RunPuzzle {
 				sum += Integer.parseInt(currNum);
 			}
 		}
-		if (debugSection1) System.out.println("Current sum is " + sum);
+		logDebug("Current sum is " + sum);
 		return sum;
 	}
 	
 	private int sumSkippingRed(String json) {
 		StringBuffer s = new StringBuffer(json);
-		if (debugSection2) System.out.println("Sum skipping red for string '" + s.toString() + "'");
+		logDebug("Sum skipping red for string '" + s.toString() + "'");
 		int sum = 0;
 		while (s.length() > 0) {
 			if (s.charAt(0) == '{') {
-				if (debugSection2) System.out.println("Top level is an object");
+				logDebug("Top level is an object");
 				int endInd = findEnd(s, 0, '}');
-				if (debugSection2) System.out.println("End brace at " + endInd);
-				if (debugSection2) System.out.println("Sum object " + s.substring(1, endInd));
+				logDebug("End brace at " + endInd);
+				logDebug("Sum object " + s.substring(1, endInd));
 				sum += sumObject(s.substring(1, endInd));
-				if (debugSection2) System.out.println("Current sum is " + sum);
+				logDebug("Current sum is " + sum);
 				s.replace(0, endInd + 1, "");
-				if (debugSection2) System.out.println("Remaining string is " + s.toString());
+				logDebug("Remaining string is " + s.toString());
 			}
 			else {
-				if (debugSection2) System.out.println("Top level is an array");
+				logDebug("Top level is an array");
 				int endInd = findEnd(s, 0, ']');
-				if (debugSection2) System.out.println("End brace at " + endInd);
-				if (debugSection2) System.out.println("Sum array " + s.substring(1, endInd));
+				logDebug("End brace at " + endInd);
+				logDebug("Sum array " + s.substring(1, endInd));
 				sum += sumArray(s.substring(1, endInd));
-				if (debugSection2) System.out.println("Current sum is " + sum);
+				logDebug("Current sum is " + sum);
 				s.replace(0, endInd + 1, "");
-				if (debugSection2) System.out.println("Remaining string is " + s.toString());
+				logDebug("Remaining string is " + s.toString());
 			}
 		}
 		return sum;
@@ -129,40 +128,40 @@ public class JsAbacusFrameworkIo extends RunPuzzle {
 	
 	private int sumArray(String input) {
 		StringBuffer s = new StringBuffer(input);
-		if (debugSection2) System.out.println("Sum array for string '" + s.toString() + "'");
+		logDebug("Sum array for string '" + s.toString() + "'");
 		int sum = 0;
 		
 		int objInd = s.indexOf("{");
 		int arrInd = s.indexOf("[");
 		while (objInd > -1 || arrInd > -1) {
 			if (objInd > -1) {
-				if (debugSection2) System.out.println("Found an object");
+				logDebug("Found an object");
 				int endInd = findEnd(s, objInd, '}');
-				if (debugSection2) System.out.println("End brace at " + endInd);
-				if (debugSection2) System.out.println("Sum object " + s.substring(objInd + 1, endInd));
+				logDebug("End brace at " + endInd);
+				logDebug("Sum object " + s.substring(objInd + 1, endInd));
 				sum += sumObject(s.substring(objInd + 1, endInd));
-				if (debugSection2) System.out.println("Current sum is " + sum);
+				logDebug("Current sum is " + sum);
 				s.replace(objInd, endInd + 1, "");
-				if (debugSection2) System.out.println("Remaining string is " + s.toString());
+				logDebug("Remaining string is " + s.toString());
 			}
 			else if (arrInd > -1) {
-				if (debugSection2) System.out.println("Found an array");
+				logDebug("Found an array");
 				int endInd = findEnd(s, arrInd, ']');
-				if (debugSection2) System.out.println("End brace at " + endInd);
-				if (debugSection2) System.out.println("Sum array " + s.substring(arrInd + 1, endInd));
+				logDebug("End brace at " + endInd);
+				logDebug("Sum array " + s.substring(arrInd + 1, endInd));
 				sum += sumArray(s.substring(arrInd + 1, endInd));
-				if (debugSection2) System.out.println("Current sum is " + sum);
+				logDebug("Current sum is " + sum);
 				s.replace(arrInd, endInd + 1, "");
-				if (debugSection2) System.out.println("Remaining string is " + s.toString());
+				logDebug("Remaining string is " + s.toString());
 			}
 			
 			objInd = s.indexOf("{");
 			arrInd = s.indexOf("[");
 		}
 		
-		if (debugSection2) System.out.println("Sum remaining numbers");
+		logDebug("Sum remaining numbers");
 		sum += sumAllNumbers(s.toString());
-		if (debugSection2) System.out.println("Current sum is " + sum);
+		logDebug("Current sum is " + sum);
 		return sum;
 	}
 	
@@ -174,24 +173,24 @@ public class JsAbacusFrameworkIo extends RunPuzzle {
 		int arrInd = s.indexOf("[");
 		while (objInd > -1 || arrInd > -1) {
 			if (objInd > -1) {
-				if (debugSection2) System.out.println("Found an object");
+				logDebug("Found an object");
 				int endInd = findEnd(s, objInd, '}');
-				if (debugSection2) System.out.println("End brace at " + endInd);
-				if (debugSection2) System.out.println("Sum object " + s.substring(objInd + 1, endInd));
+				logDebug("End brace at " + endInd);
+				logDebug("Sum object " + s.substring(objInd + 1, endInd));
 				sum += sumObject(s.substring(objInd + 1, endInd));
-				if (debugSection2) System.out.println("Current sum is " + sum);
+				logDebug("Current sum is " + sum);
 				s.replace(objInd, endInd + 1, "");
-				if (debugSection2) System.out.println("Remaining string is " + s.toString());
+				logDebug("Remaining string is " + s.toString());
 			}
 			else if (arrInd > -1) {
-				if (debugSection2) System.out.println("Found an array");
+				logDebug("Found an array");
 				int endInd = findEnd(s, arrInd, ']');
-				if (debugSection2) System.out.println("End brace at " + endInd);
-				if (debugSection2) System.out.println("Sum array " + s.substring(arrInd + 1, endInd));
+				logDebug("End brace at " + endInd);
+				logDebug("Sum array " + s.substring(arrInd + 1, endInd));
 				sum += sumArray(s.substring(arrInd + 1, endInd));
-				if (debugSection2) System.out.println("Current sum is " + sum);
+				logDebug("Current sum is " + sum);
 				s.replace(arrInd, endInd + 1, "");
-				if (debugSection2) System.out.println("Remaining string is " + s.toString());
+				logDebug("Remaining string is " + s.toString());
 			}
 			
 			objInd = s.indexOf("{");
@@ -199,15 +198,15 @@ public class JsAbacusFrameworkIo extends RunPuzzle {
 		}
 		
 		if (s.toString().contains("red")) {
-			if (debugSection2) System.out.println("Object contains red");
+			logDebug("Object contains red");
 			sum = 0;
 		}
 		else {
-			if (debugSection2) System.out.println("Sum remaining numbers");
+			logDebug("Sum remaining numbers");
 			sum += sumAllNumbers(s.toString());
 		}
 
-		if (debugSection2) System.out.println("Current sum is " + sum);
+		logDebug("Current sum is " + sum);
 		return sum;
 	}
 	

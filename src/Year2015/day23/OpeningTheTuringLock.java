@@ -21,7 +21,7 @@ public class OpeningTheTuringLock extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		System.out.println("\t\t\t\t" + (Integer)result);
+		log("\t\t\t\t" + (Integer)result);
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class OpeningTheTuringLock extends RunPuzzle {
 			for (String s : input) {
 				program.add(new Instruction(s));
 			}
-			if (debug) System.out.println("Parsed " + program.size() + " instructions");
+			logDebug("Parsed " + program.size() + " instructions");
 		}
 		
 		int runProgram(int section) {
@@ -100,7 +100,7 @@ public class OpeningTheTuringLock extends RunPuzzle {
 			
 			while (cursor >= 0 && cursor < program.size()) {
 				Instruction i = program.get(cursor);
-				if (debug) System.out.println("Do instruction " + cursor + ": " + i.op + ", " + i.r + ", " + i.offset + " (values " + registerA + ", " + registerB + ", cursor " + cursor + ")");
+				logDebug("Do instruction " + cursor + ": " + i.op + ", " + i.r + ", " + i.offset + " (values " + registerA + ", " + registerB + ", cursor " + cursor + ")");
 				
 				switch(i.op) {
 				case Half:
@@ -130,7 +130,7 @@ public class OpeningTheTuringLock extends RunPuzzle {
 					cursor++;
 					break;
 				}
-				if (debug) System.out.println("\tNew values " + registerA + ", " + registerB + ", cursor " + cursor);
+				logDebug("\tNew values " + registerA + ", " + registerB + ", cursor " + cursor);
 			}
 			
 			return registerB;
