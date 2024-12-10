@@ -23,7 +23,7 @@ public class CorporatePolicy extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		log("\t\t\t\t" + (String)result);
+		log(defaultOutputIndent + (String)result);
 	}
 
 	@Override

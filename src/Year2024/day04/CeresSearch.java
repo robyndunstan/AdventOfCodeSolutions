@@ -90,50 +90,43 @@ public class CeresSearch extends tools.RunPuzzle {
         }
         else { // < 1861
             int foundWords = 0;
-            return foundWords;
-
-
-
-
-            String targetWord = "MAS";
-            for (int i = 1; i < wordSearch.size() - 1; i++) {
+            for (int i = 0; i < wordSearch.size(); i++) {
                 logDebug("Searching row " + i);
-                int targetSearchIndex = wordSearch.get(i).indexOf(targetWord.charAt(1));
-                logDebug("Found middle character at " + targetSearchIndex);
+                int targetSearchIndex = wordSearch.get(i).indexOf('A');
                 while (targetSearchIndex > -1) {
+                    logDebug("Found middle character at (" + i + ", " + targetSearchIndex + ")");
                     Point targetSearchPoint = new Point(i, targetSearchIndex);
 
-                    logDebug("\t" + GetCharacter(GetNextPoint(targetSearchPoint, Direction.NW)) + GetCharacter(GetNextPoint(targetSearchPoint, Direction.N)) + GetCharacter(GetNextPoint(targetSearchPoint, Direction.NE)));
-                    logDebug("\t" + GetCharacter(GetNextPoint(targetSearchPoint, Direction.W)) + GetCharacter(targetSearchPoint) + GetCharacter(GetNextPoint(targetSearchPoint, Direction.E)));
-                    logDebug("\t" + GetCharacter(GetNextPoint(targetSearchPoint, Direction.SW)) + GetCharacter(GetNextPoint(targetSearchPoint, Direction.S)) + GetCharacter(GetNextPoint(targetSearchPoint, Direction.SE)));
+                    char cNW = GetCharacter(GetNextPoint(targetSearchPoint, Direction.NW));
+                    char cN = GetCharacter(GetNextPoint(targetSearchPoint, Direction.N));
+                    char cNE = GetCharacter(GetNextPoint(targetSearchPoint, Direction.NE));
+                    char cW = GetCharacter(GetNextPoint(targetSearchPoint, Direction.W));
+                    char cX = GetCharacter(targetSearchPoint);
+                    char cE = GetCharacter(GetNextPoint(targetSearchPoint, Direction.E));
+                    char cSW = GetCharacter(GetNextPoint(targetSearchPoint, Direction.SW));
+                    char cS = GetCharacter(GetNextPoint(targetSearchPoint, Direction.S));
+                    char cSE = GetCharacter(GetNextPoint(targetSearchPoint, Direction.SE));
 
-                    if ((CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.N), Direction.S)
-                            || CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.S), Direction.N))
-                        && (CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.E), Direction.W)
-                            || CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.W), Direction.E))) {
-                                foundWords++;
-                                logDebug("Found orthogonal");
+                    logDebug("\t" + cNW + cN + cNE);
+                    logDebug("\t" + cW + cX + cE);
+                    logDebug("\t" + cSW + cS + cSE);
+
+                    if (((cNW == 'M' && cSE == 'S') || (cNW == 'S' && cSE == 'M')) && ((cNE == 'M' && cSW == 'S') || (cNE == 'S' && cSW == 'M'))) {
+                        foundWords++;
+                        logDebug("Found diagonal");
                     }
 
-                    if ((CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.NW), Direction.SE)
-                            || CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.SE), Direction.NW))
-                        && (CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.NE), Direction.SW)
-                            || CheckForWord(targetWord, GetNextPoint(targetSearchPoint, Direction.SW), Direction.NE))) {
-                                foundWords++;
-                                logDebug("Found diagonal");
-                    }
                     if (targetSearchIndex < wordSearch.get(i).size() - 1) {
                         int previousTargetSearchIndex = targetSearchIndex;
-                        targetSearchIndex = wordSearch.get(i).subList(previousTargetSearchIndex + 1, wordSearch.get(i).size()).indexOf(targetWord.charAt(1));
+                        targetSearchIndex = wordSearch.get(i).subList(previousTargetSearchIndex + 1, wordSearch.get(i).size()).indexOf('A');
                         if (targetSearchIndex > -1) targetSearchIndex += previousTargetSearchIndex + 1;
-                        logDebug("Next search at " + targetSearchIndex);
                     }
                     else 
                         targetSearchIndex = -1;
+
                     logDebug(foundWords + " total words found after searching point (" + targetSearchPoint.x + ", " + targetSearchPoint.y + ")");
                 }
             }
-
             return foundWords;
         }
     }

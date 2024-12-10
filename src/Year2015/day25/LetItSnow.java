@@ -59,7 +59,7 @@ public class LetItSnow extends RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		log("\t\t\t\t" + (Long)result);
+		log(defaultOutputIndent + (Long)result);
 	}
 
 	@Override
