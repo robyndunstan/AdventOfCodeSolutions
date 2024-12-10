@@ -12,7 +12,7 @@ public class CeresSearch extends tools.RunPuzzle {
 
     public CeresSearch(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
-        debug = true;
+        debug = false;
     }
 
     public static void main(String[] args) throws IOException {
