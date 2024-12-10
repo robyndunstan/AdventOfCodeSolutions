@@ -28,7 +28,6 @@ public abstract class RunPuzzle {
                 this.logFile.closeFile();
             } catch (IOException ex) {}
 		this.logFile.setFile(filename);
-		this.logFile.openOutput();
 	}
 
 	public void log(String line) {
@@ -46,9 +45,18 @@ public abstract class RunPuzzle {
 			System.out.println(line);
 		}
 	}
+	public void logDebug(Integer value) {
+		logDebug(value.toString());
+	}
 	
 	public void run() {
 		testCases = createTestCases();
+		if (this.logFile.isSet()) {
+			this.logFile.deleteFile();
+			try {
+				this.logFile.openOutput();
+			} catch (IOException ex) {}
+		}
 		
 		log("Day " + dayNumber + ": " + dayTitle);
 		log("\tSection 1");
@@ -80,5 +88,10 @@ public abstract class RunPuzzle {
 		}
 		log("\t\tPuzzle: ");
 		printResult(doProcessing(2, puzzleInput));
+		if (logFile.isSet()) {
+			try {
+				logFile.closeFile();
+			} catch (IOException ex) {}
+		}
 	}
 }

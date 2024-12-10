@@ -88,6 +88,7 @@ public class FileController {
 		// This function assumes that the file check has already been performed elsewhere
 		pw = new PrintWriter(new FileWriter(f));
 		lineCount = 0;
+		exists = true;
 	}
 	
 	/**
@@ -134,6 +135,20 @@ public class FileController {
 		}
 		lineCount = 0;
 	}
+
+	/**
+	 * Delete file
+	 */
+	public boolean deleteFile() {
+            try {
+                closeFile();
+            } catch (IOException ex) {}
+		if (f.delete()) {
+			exists = false;
+			return true;
+		}
+		else return false;
+	}
 	
 	/**
 	 * File Status
@@ -146,5 +161,8 @@ public class FileController {
 	}
 	public int getLineNumber() {
 		return lineCount;
+	}
+	public boolean isSet() {
+		return f.getAbsolutePath() != null && f.getAbsolutePath().length() > 0;
 	}
 }

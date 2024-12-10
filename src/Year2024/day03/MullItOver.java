@@ -29,7 +29,7 @@ public class MullItOver extends tools.RunPuzzle {
 
     @Override
     public void printResult(Object result) {
-        System.out.println(defaultOutputIndent + (Integer)result);
+        log(defaultOutputIndent + (Integer)result);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class MullItOver extends tools.RunPuzzle {
         if (section == 1) {
             String re = "mul\\(\\d{1,3},\\d{1,3}\\)";
             ArrayList<String> matches = GetMatches(re, instructions);
-            if (this.debug) System.out.println(matches.size());
+            logDebug(matches.size());
             int total = 0;
             for (String m : matches) {
                 total += parseMultiply(m);
@@ -48,7 +48,7 @@ public class MullItOver extends tools.RunPuzzle {
         else {
             String re = "mul\\(\\d{1,3},\\d{1,3}\\)|do\\(\\)|don't\\(\\)";
             ArrayList<String> matches = GetMatches(re, instructions);
-            if (this.debug) System.out.println(matches.size());
+            logDebug(matches.size());
             boolean isEnabled = true;
             int total = 0;
             for (String m : matches) {
@@ -82,7 +82,7 @@ public class MullItOver extends tools.RunPuzzle {
         Matcher m = p.matcher(input);
         while (m.find()) {
             String f = m.group();
-            if (this.debug) System.out.println(f);
+            logDebug(f);
             matches.add(f);
         }
         return matches;

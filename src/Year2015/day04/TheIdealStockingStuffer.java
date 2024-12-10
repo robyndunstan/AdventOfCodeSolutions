@@ -67,7 +67,7 @@ public class TheIdealStockingStuffer extends tools.RunPuzzle {
 
 	@Override
 	public void printResult(Object result) {
-		log("\t\t\t\t" + (Integer)result);
+		log(defaultOutputIndent + (Integer)result);
 	}
 
 	@Override

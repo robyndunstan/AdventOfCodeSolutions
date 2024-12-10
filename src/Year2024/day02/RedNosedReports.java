@@ -29,7 +29,7 @@ public class RedNosedReports extends tools.RunPuzzle {
 
     @Override
     public void printResult(Object result) {
-        System.out.println(defaultOutputIndent + (Integer)result);
+        log(defaultOutputIndent + (Integer)result);
     }
 
     @Override
