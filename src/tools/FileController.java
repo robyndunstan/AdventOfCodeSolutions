@@ -163,6 +163,11 @@ public class FileController {
 		return lineCount;
 	}
 	public boolean isSet() {
-		return f.getAbsolutePath() != null && f.getAbsolutePath().length() > 0;
+		try {
+			return f.getAbsolutePath() != null && f.getAbsolutePath().length() > 0;
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 }
