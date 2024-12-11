@@ -26,7 +26,7 @@ public class PrintQueue extends tools.RunPuzzle {
     public ArrayList<TestCase> createTestCases() {
         ArrayList<TestCase> tests = new ArrayList<>();
         tests.add(new TestCase<>(1, "src\\Year2024\\day05\\data\\test1File", 143));
-        tests.add(new TestCase<>(2, "src\\Year2024\\day05\\data\\test1File", 0));
+        tests.add(new TestCase<>(2, "src\\Year2024\\day05\\data\\test1File", 123));
         return tests;
     }
 
@@ -84,33 +84,70 @@ public class PrintQueue extends tools.RunPuzzle {
 
         if (section == 1) {
             int middleSum = 0;
-
             for (ArrayList<Integer> printList : printUpdates) {
-                boolean valid = true;
-                for (int i = 0; i < printList.size(); i++) {
-                    int currentPage = printList.get(i);
-                    if (pageOrder.containsKey(currentPage)) {
-                        ArrayList<Integer> mustBeAfter = pageOrder.get(currentPage);
-                        for (int page : mustBeAfter) {
-                            int testIndex = printList.indexOf(page);
-                            if (testIndex > -1 && testIndex < i) {
-                                valid = false;
-                                break;
-                            }
-                        }
-                    }
-                    if (!valid) break;
-                }
-                if (valid) {
-                    int middleIndex = printList.size() / 2;
-                    middleSum += printList.get(middleIndex);
+                if (isValid(printList)) {
+                    middleSum += getMiddlePage(printList);
                 }
             }
-
             return middleSum;
         }
         else {
-            return null;
+            int middleSum = 0;
+            for (ArrayList<Integer> printList : printUpdates) {
+                if (!isValid(printList)) {
+                    do {
+                        boolean changed = false;
+                        for (int i = 0; i < printList.size(); i++) {
+                            int currentPage = printList.get(i);
+                            if (pageOrder.containsKey(currentPage)) {
+                                ArrayList<Integer> mustBeAfter = pageOrder.get(currentPage);
+                                for (int page : mustBeAfter) {
+                                    int testIndex = printList.indexOf(page);
+                                    if (testIndex > -1 && testIndex < i) {
+                                        printList.remove(i);
+                                        printList.add(testIndex, currentPage);
+                                        changed = true;
+                                        break;
+                                    }
+                                }
+                                if (changed) break;
+                            }
+                        }
+                        if (!changed) {
+                            StringBuilder pages = new StringBuilder();
+                            for (int p : printList) pages.append(p).append(" ");
+                            log("Can't fix list " + pages.toString());
+                            break;
+                        }
+                    } while (!isValid(printList));
+                    middleSum += getMiddlePage(printList);
+                }
+            }
+            return middleSum;
         }
+    }
+
+    private int getMiddlePage(ArrayList<Integer> printList) {
+        int middleIndex = printList.size() / 2;
+        return printList.get(middleIndex);
+    }
+
+    private boolean isValid(ArrayList<Integer> printList) {
+        boolean valid = true;
+        for (int i = 0; i < printList.size(); i++) {
+            int currentPage = printList.get(i);
+            if (pageOrder.containsKey(currentPage)) {
+                ArrayList<Integer> mustBeAfter = pageOrder.get(currentPage);
+                for (int page : mustBeAfter) {
+                    int testIndex = printList.indexOf(page);
+                    if (testIndex > -1 && testIndex < i) {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+            if (!valid) break;
+        }
+        return valid;
     }
 }
