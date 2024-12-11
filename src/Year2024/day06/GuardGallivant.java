@@ -2,6 +2,7 @@ package Year2024.day06;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import tools.FileController;
 import tools.RunPuzzle;
 import tools.TestCase;
 
@@ -32,6 +33,9 @@ public class GuardGallivant extends tools.RunPuzzle {
 
     @Override
     public Object doProcessing(int section, Object input) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String fileName = (String)input;
+        FileController file = new FileController(fileName);
+
+        return null;
     }
 }
