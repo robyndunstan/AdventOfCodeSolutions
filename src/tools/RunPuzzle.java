@@ -10,7 +10,7 @@ public abstract class RunPuzzle {
 	Object puzzleInput;
 	protected String defaultOutputIndent = "\t\t\t\t";
 	protected boolean debug = false;
-	FileController logFile;
+	protected FileController logFile;
 	
 	public abstract ArrayList<TestCase> createTestCases();
 	public abstract void printResult(Object result);
