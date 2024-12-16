@@ -11,15 +11,17 @@ public class GuardGallivant extends tools.RunPuzzle {
     private ArrayList<ArrayList<MapBlock>> map;
     private Point guardPosition;
     private MapDirection guardDirection;
+    private Point initialGuardPosition;
+    private MapDirection initialGuardDirection;
 
     public GuardGallivant(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
-        debug = true;
+        debug = false;
     }
 
     public static void main(String[] args) throws IOException {
         RunPuzzle p = new GuardGallivant(6, "Guard Gallivant", "src\\Year2024\\day06\\data\\puzzleFile");
-        p.setLogFile("src\\Year2024\\day06\\data\\log.txt");
+        //p.setLogFile("src\\Year2024\\day06\\data\\log.txt");
         p.run();
     }
 
@@ -43,11 +45,34 @@ public class GuardGallivant extends tools.RunPuzzle {
         try {
             ParseMap(file);
             if (section == 1) {
-                while (doStep()) {}
+                while (doStep() == StepResult.Continue) {}
                 return getTotalCovered();
             }
             else {
-                return null;
+                while (doStep() == StepResult.Continue) {}
+                recordUnaltered();
+                reset();
+                int countGoodObstructions = 0;
+                int testPoints = 0;
+                for (ArrayList<MapBlock> row : map) {
+                    for (MapBlock m : row) {
+                        if (m.unalteredInitialDirections.size() > 0) {
+                            testPoints++;
+                            reset();
+                            m.hasObstruction = true;
+                            StepResult r = doStep();
+                            while (r == StepResult.Continue) {
+                                r = doStep();
+                            }
+                            if (r == StepResult.Loop) {
+                                countGoodObstructions++;
+                            }
+                            m.hasObstruction = false;
+                            if (testPoints % 1000 == 0) log("Tested " + testPoints + " points");
+                        }
+                    }
+                }
+                return countGoodObstructions;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -86,10 +111,30 @@ public class GuardGallivant extends tools.RunPuzzle {
             map.add(row);
             line = f.readLine();
         }
+        initialGuardDirection = guardDirection;
+        initialGuardPosition = guardPosition;
         try {
             f.closeFile();
         } catch (IOException ex) {}
         logDebug("Parsing map complete");
+    }
+
+    private void recordUnaltered() {
+        for (ArrayList<MapBlock> row : map) {
+            for (MapBlock m : row) {
+                m.recordUnaltered();
+            }
+        }
+    }
+
+    private void reset() {
+        for (ArrayList<MapBlock> row : map) {
+            for (MapBlock m : row) {
+                m.reset();
+            }
+        }
+        guardDirection = initialGuardDirection;
+        guardPosition = initialGuardPosition;
     }
 
     private MapBlock getBlock(Point p) {
@@ -109,45 +154,49 @@ public class GuardGallivant extends tools.RunPuzzle {
         };
     }
 
-    private boolean doStep() {
+    private static enum StepResult {
+        Continue, Loop, OffMap
+    }
+
+    private StepResult doStep() {
         Point forward = getForward();
         MapBlock nextStep = getBlock(forward);
         if (nextStep == null) {
             logDebug("Reached edge of area");
-            return false;
+            return StepResult.OffMap;
         }
         else if (nextStep.hasObstruction) {
             switch (guardDirection) {
                 case MapDirection.N:
                     guardDirection = MapDirection.E;
                     logDebug("Turning E");
-                    return true;
+                    return StepResult.Continue;
                 case MapDirection.E:
                     guardDirection = MapDirection.S;
                     logDebug("Turning S");
-                    return true;
+                    return StepResult.Continue;
                 case MapDirection.S: 
                     guardDirection = MapDirection.W;
                     logDebug("Turning W");
-                    return true;
+                    return StepResult.Continue;
                 case MapDirection.W:
                     guardDirection = MapDirection.N;
                     logDebug("Turning N");
-                    return true;
+                    return StepResult.Continue;
                 default:
                     log("Invalid direction");
-                    return false;
+                    return StepResult.OffMap;
             }
         }
         else if (nextStep.isRepeat(guardDirection)) {
             logDebug("Completed loop");
-            return false;
+            return StepResult.Loop;
         }
         else {
             logDebug("(" + guardPosition.x + ", " + guardPosition.y + ") to (" + forward.x + ", " + forward.y + ")");
             guardPosition = forward;
             nextStep.addGuardStep(guardDirection);
-            return true;
+            return StepResult.Continue;
         }
     }
 
@@ -169,10 +218,12 @@ public class GuardGallivant extends tools.RunPuzzle {
     private static class MapBlock {
         boolean hasObstruction;
         ArrayList<MapDirection> guardInitialDirections;
+        ArrayList<MapDirection> unalteredInitialDirections;
         
         public MapBlock(boolean hasObstruction) {
             this.hasObstruction = hasObstruction;
             guardInitialDirections = new ArrayList<>();
+            unalteredInitialDirections = new ArrayList<>();
         }
 
         public void addGuardStep(MapDirection d) {
@@ -182,6 +233,14 @@ public class GuardGallivant extends tools.RunPuzzle {
 
         public boolean isRepeat(MapDirection d) {
             return guardInitialDirections.contains(d);
+        }
+
+        public void recordUnaltered() {
+            unalteredInitialDirections = guardInitialDirections;
+        }
+
+        public void reset() {
+            guardInitialDirections = new ArrayList<>();
         }
     }
 }
