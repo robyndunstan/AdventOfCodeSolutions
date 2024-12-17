@@ -39,7 +39,7 @@ public class GuardGallivant extends tools.RunPuzzle {
     }
 
     @Override
-    public Object doProcessing(int section, Object input) { // < 4688
+    public Object doProcessing(int section, Object input) {
         String fileName = (String)input;
         FileController file = new FileController(fileName);
         try {
