@@ -74,6 +74,11 @@ public class ResonantCollinearity extends tools.RunPuzzle {
             ex.printStackTrace();
             return null;
         }
+        finally {
+            try {
+                file.closeFile();
+            } catch (IOException ex) {}
+        }
 
         for (char c : antennas.keySet()) {
             ArrayList<Point> aList = antennas.get(c);

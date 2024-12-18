@@ -58,6 +58,11 @@ public class CeresSearch extends tools.RunPuzzle {
             ex.printStackTrace();
             return null;
         }
+        finally {
+            try {
+                file.closeFile();
+            } catch (IOException ex) {}
+        }
 
         if (section == 1) {
             String targetWord = "XMAS";

@@ -78,6 +78,11 @@ public class GuardGallivant extends tools.RunPuzzle {
             ex.printStackTrace();
             return null;
         }
+        finally {
+            try {
+                file.closeFile();
+            } catch (IOException ex) {}
+        }
     }
 
     private void ParseMap(FileController f) throws IOException {

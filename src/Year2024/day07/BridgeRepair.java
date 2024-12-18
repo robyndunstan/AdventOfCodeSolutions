@@ -53,6 +53,11 @@ public class BridgeRepair extends tools.RunPuzzle {
             ex.printStackTrace();
             return null;
         }
+        finally {
+            try {
+                file.closeFile();
+            } catch (IOException ex) {}
+        }
 
         long totalValid = 0;
         for (CalibrationEquation c : calibrations) {

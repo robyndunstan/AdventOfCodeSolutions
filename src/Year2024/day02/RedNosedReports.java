@@ -59,6 +59,11 @@ public class RedNosedReports extends tools.RunPuzzle {
             e.printStackTrace();
             return null;
         }
+        finally {
+            try {
+                file.closeFile();
+            } catch (IOException ex) {}
+        }
 
         int safeReports = 0;
         for (ArrayList<Integer> r : reports) {

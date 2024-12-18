@@ -81,6 +81,11 @@ public class PrintQueue extends tools.RunPuzzle {
             ex.printStackTrace();
             return null;
         }
+        finally {
+            try {
+                file.closeFile();
+            } catch (IOException ex) {}
+        }
 
         if (section == 1) {
             int middleSum = 0;
