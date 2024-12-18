@@ -1,13 +1,12 @@
 package Year2024.day09;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class DiskFragmenter extends tools.RunPuzzle {
-    private ArrayList<Long> blocks;
-
     public DiskFragmenter(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
         debug = false;
@@ -15,7 +14,7 @@ public class DiskFragmenter extends tools.RunPuzzle {
 
     public static void main(String[] args) throws IOException {
         RunPuzzle p = new DiskFragmenter(9, "Disk Fragmenter", puzzleInput);
-        //p.setLogFile("src\\Year2024\\day09\\data\\log.txt");
+        p.setLogFile("src\\Year2024\\day09\\data\\log.txt");
         p.run();
     }
 
@@ -24,6 +23,7 @@ public class DiskFragmenter extends tools.RunPuzzle {
         ArrayList<TestCase> tests = new ArrayList<>();
         tests.add(new TestCase<>(1, test1input, 1928l));
         tests.add(new TestCase<>(1, test2input, 60l));
+        tests.add(new TestCase<>(2, test1input, 2858l));
         return tests;
     }
 
@@ -35,51 +35,117 @@ public class DiskFragmenter extends tools.RunPuzzle {
     @Override
     public Object doProcessing(int section, Object input) {
         String diskMap = (String)input;
-        blocks = new ArrayList<>();
-
-        long inputFileId = 0l;
-        boolean isFile = true;
-        for (char c : diskMap.toCharArray()) {
-            int size = Integer.parseInt("" + c);
-            if (isFile) {
-                for (int i = 0; i < size; i++) {
-                    blocks.add(inputFileId);
-                }
-                isFile = false;
-                inputFileId++;
-            }
-            else {
-                for (int i = 0; i < size; i++) {
-                    blocks.add(null);
-                }
-                isFile = true;
-            }
-        }
 
         if (section == 1) {
+            ArrayList<Long> blocks = new ArrayList<>();
+            long inputFileId = 0l;
+            boolean isFile = true;
+            for (char c : diskMap.toCharArray()) {
+                int size = Integer.parseInt("" + c);
+                if (isFile) {
+                    for (int i = 0; i < size; i++) {
+                        blocks.add(inputFileId);
+                    }
+                    isFile = false;
+                    inputFileId++;
+                }
+                else {
+                    for (int i = 0; i < size; i++) {
+                        blocks.add(null);
+                    }
+                    isFile = true;
+                }
+            }
+
             int firstNull = blocks.indexOf(null);
-            int lastFile = getLastFileBlock();
+            int lastFile = getLastFileBlock(blocks);
             while (lastFile > firstNull) {
                 blocks.set(firstNull, blocks.get(lastFile));
                 blocks.set(lastFile, null);
                 firstNull = blocks.indexOf(null);
-                lastFile = getLastFileBlock();
+                lastFile = getLastFileBlock(blocks);
             }
-            long checksum = 0;
-            for (int i = 0; i < blocks.size(); i++) {
-                if (blocks.get(i) == null) break;
-                else {
-                    checksum += i * blocks.get(i);
-                }
-            }
-            return checksum;
+            return getChecksum(blocks);
         }
         else {
-            return null;
+            // Use an array of Point with x = fileID and y = size
+            ArrayList<Point> files = new ArrayList<>();
+            int inputFileId = 0;
+            int maxFileId = -1;
+            boolean isFile = true;
+            for (char c : diskMap.toCharArray()) {
+                int size = Integer.parseInt("" + c);
+                if (size > 0) {
+                    if (isFile) {
+                        maxFileId = inputFileId;
+                        files.add(new Point(inputFileId, size));
+                        inputFileId++;
+                    }
+                    else {
+                        files.add(new Point(-1, size));
+                    }
+                }
+                isFile = !isFile;
+            }
+            if (debug) {
+                StringBuilder s = new StringBuilder();
+                for (Point p : files) {
+                    if (p.x <= 9) s.append("(").append(p.x).append(",").append(p.y).append(")");
+                }
+                logDebug(s.toString());
+            }
+
+            for (int fileId = maxFileId; fileId > 0; fileId--) {
+                for (int fileIndex = 0; fileIndex < files.size(); fileIndex++) {
+                    if (files.get(fileIndex).x == fileId) {
+                        Point file = files.get(fileIndex);
+                        int emptyIndex = -1;
+                        for (int j = 0; j < files.size(); j++) {
+                            if (files.get(j).x == -1 && files.get(j).y >= file.y && emptyIndex == -1) {
+                                emptyIndex = j;
+                                break;
+                            }
+                        }
+                        if (emptyIndex != -1 && emptyIndex < fileIndex) {
+                            file.x = -1;
+                            files.get(emptyIndex).y -= file.y;
+                            files.add(emptyIndex, new Point(fileId, file.y));
+                        }
+                    }
+                }
+                if (debug) {
+                    StringBuilder s = new StringBuilder();
+                    for (Point p : files) {
+                        if (p.x <= 9) s.append("(").append(p.x).append(",").append(p.y).append(")");
+                    }
+                    logDebug(s.toString());
+                }
+            }
+
+            ArrayList<Long> blocks = new ArrayList<>();
+            for (Point p : files) {
+                if (p.x == -1) {
+                    for (int i = 0; i < p.y; i++) blocks.add(null);
+                }
+                else {
+                    for (int i = 0; i < p.y; i++) blocks.add((long)p.x);
+                }
+            }
+            return getChecksum(blocks);
         }
     }
 
-    private int getLastFileBlock() {
+    private long getChecksum(ArrayList<Long> blocks) {
+        long checksum = 0;
+        for (int i = 0; i < blocks.size(); i++) {
+            if (blocks.get(i) != null) {
+                checksum += i * blocks.get(i);
+            }
+        }
+        return checksum;
+    }
+
+    private int getLastFileBlock(ArrayList<Long> blocks) {
         if (blocks == null || blocks.size() == 0) {
             return -1;
         }
