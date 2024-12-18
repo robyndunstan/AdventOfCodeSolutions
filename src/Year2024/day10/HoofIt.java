@@ -46,6 +46,30 @@ public class HoofIt extends tools.RunPuzzle {
             file.openInput();
             String line = file.readLine();
             while (line != null) {
+                line = line.trim();
+                ArrayList<Integer> row = new ArrayList<>();
+                for (char c : line.toCharArray()) {
+                    switch (c) {
+                        case '0':
+                        case '1':
+                        case '2':
+                        case '3':
+                        case '4':
+                        case '5':
+                        case '6':
+                        case '7':
+                        case '8':
+                        case '9':
+                            row.add(Integer.valueOf("" + c));
+                            break;
+                        case '.':
+                            row.add(-1);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                elevationMap.add(row);
                 line = file.readLine();
             }
         } catch (IOException ex) {
@@ -58,7 +82,12 @@ public class HoofIt extends tools.RunPuzzle {
             } catch (IOException ex) {}
         }
 
-        return null;
+        if (section == 1) {
+            return null;
+        }
+        else {
+            return null;
+        }
     }
 
 }
