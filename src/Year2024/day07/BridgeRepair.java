@@ -1,4 +1,4 @@
-package Year2024.day07.data;
+package Year2024.day07;
 
 import java.io.IOException;
 import java.util.ArrayList;
