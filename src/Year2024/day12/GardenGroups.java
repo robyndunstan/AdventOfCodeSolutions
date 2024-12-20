@@ -12,7 +12,7 @@ public class GardenGroups extends tools.RunPuzzle {
 
     public GardenGroups(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
-        debug = false;
+        debug = true;
     }
 
     public static void main(String[] args) throws IOException {
@@ -32,7 +32,7 @@ public class GardenGroups extends tools.RunPuzzle {
 
     @Override
     public void printResult(Object result) {
-        log(defaultOutputIndent + (Integer)result);
+        log(defaultOutputIndent + (Long)result);
     }
 
     @Override
@@ -62,6 +62,7 @@ public class GardenGroups extends tools.RunPuzzle {
             long price = 0;
             Point nextArea = findNextArea();
             while (nextArea != null) {
+                logDebug("Checking plot " + getGardenPlot(nextArea) + " at (" + nextArea.x + ", " + nextArea.y + ")");
                 ArrayList<Point> areaPoints = getAreaPoints(nextArea);
                 int area = areaPoints.size();
                 int perimeter = 0;
@@ -76,7 +77,9 @@ public class GardenGroups extends tools.RunPuzzle {
                     if (!isInArea(west, areaPoints)) perimeter++;
                 }
                 price += area * (long)perimeter;
+                logDebug("Plot has area " + area + " and perimeter " + perimeter);
                 removeArea(areaPoints);
+                nextArea = findNextArea();
             }
             return price;
         }
