@@ -3,6 +3,18 @@ package tools;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/*
+ * // Wait for all threads to finish
+for (Thread thread : threads) {
+    try {
+        thread.join();
+    } catch (InterruptedException e) {
+        // Handle interruption if needed
+        e.printStackTrace();
+    }
+}
+ */
+
 public class SimpleParallelQueue {
     // Mostly copied from https://math.hws.edu/javanotes/source/chapter12/MultiprocessingDemo2.java
     private WorkerThread[] workers; // the threads that do the tasks
