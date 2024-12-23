@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public abstract class PuzzleMap<T> {
     private FileController input;
-    private ArrayList<ArrayList<T>> map;
+    protected ArrayList<ArrayList<T>> map;
 
     public abstract T parse(char c);
 

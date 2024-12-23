@@ -3,19 +3,18 @@ package Year2024.day06;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
-import tools.FileController;
+import tools.MapDirection;
+import tools.MapPoint;
+import tools.PuzzleMap;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class GuardGallivant extends tools.RunPuzzle {
-    private ArrayList<ArrayList<MapBlock>> map;
-    private Point guardPosition;
-    private MapDirection guardDirection;
-    private Point initialGuardPosition;
-    private MapDirection initialGuardDirection;
+    private GuardMap map;
 
     public GuardGallivant(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
+        map = new GuardMap();
         debug = false;
     }
 
@@ -41,183 +40,47 @@ public class GuardGallivant extends tools.RunPuzzle {
     @Override
     public Object doProcessing(int section, Object input) {
         String fileName = (String)input;
-        FileController file = new FileController(fileName);
         try {
-            ParseMap(file);
-            if (section == 1) {
-                while (doStep() == StepResult.Continue) {}
-                return getTotalCovered();
-            }
-            else {
-                while (doStep() == StepResult.Continue) {}
-                recordUnaltered();
-                reset();
-                int countGoodObstructions = 0;
-                int testPoints = 0;
-                for (ArrayList<MapBlock> row : map) {
-                    for (MapBlock m : row) {
-                        if (m.unalteredInitialDirections.size() > 0) {
-                            testPoints++;
-                            reset();
-                            m.hasObstruction = true;
-                            StepResult r = doStep();
-                            while (r == StepResult.Continue) {
-                                r = doStep();
-                            }
-                            if (r == StepResult.Loop) {
-                                countGoodObstructions++;
-                            }
-                            m.hasObstruction = false;
-                            if (testPoints % 1000 == 0) log("Tested " + testPoints + " points");
-                        }
-                    }
-                }
-                return countGoodObstructions;
-            }
-        } catch (Exception ex) {
+            map.parseMap(fileName);
+        } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
-        finally {
-            try {
-                file.closeFile();
-            } catch (IOException ex) {}
-        }
-    }
+        map.findGuardInitialPosition();
 
-    private void ParseMap(FileController f) throws IOException {
-        logDebug("Parsing file " + f.getFile().getAbsolutePath());
-        map = new ArrayList<>();
-        f.openInput();
-        String line = f.readLine();
-        while (line != null) {
-            line = line.trim();
-            ArrayList<MapBlock> row = new ArrayList<>();
-            for (char c : line.toCharArray()) {
-                switch (c) {
-                    case '.' :
-                        row.add(new MapBlock(false));
-                        break;
-                    case '#':
-                        row.add(new MapBlock(true));
-                        break;
-                    case '^':
-                        MapBlock m = new MapBlock(false);
-                        m.addGuardStep(MapDirection.N);
-                        guardPosition = new Point(row.size(), map.size());
-                        guardDirection = MapDirection.N;
-                        row.add(m);
-                        break;
-                    default:
-                        log("Invalid character " + c);
-                        break;
-                }
-            }
-            map.add(row);
-            line = f.readLine();
-        }
-        initialGuardDirection = guardDirection;
-        initialGuardPosition = guardPosition;
-        try {
-            f.closeFile();
-        } catch (IOException ex) {}
-        logDebug("Parsing map complete");
-    }
-
-    private void recordUnaltered() {
-        for (ArrayList<MapBlock> row : map) {
-            for (MapBlock m : row) {
-                m.recordUnaltered();
-            }
-        }
-    }
-
-    private void reset() {
-        for (ArrayList<MapBlock> row : map) {
-            for (MapBlock m : row) {
-                m.reset();
-            }
-        }
-        guardDirection = initialGuardDirection;
-        guardPosition = initialGuardPosition;
-    }
-
-    private MapBlock getBlock(Point p) {
-        if (p.y >= 0 && p.y < map.size() && p.x >= 0 && p.x < map.get(p.y).size())
-            return map.get(p.y).get(p.x);
-        else 
-            return null;
-    }
-
-    private Point getForward() {
-        return switch (guardDirection) {
-            case MapDirection.N -> new Point(guardPosition.x, guardPosition.y - 1);
-            case MapDirection.E -> new Point(guardPosition.x + 1, guardPosition.y);
-            case MapDirection.S -> new Point(guardPosition.x, guardPosition.y + 1);
-            case MapDirection.W -> new Point(guardPosition.x - 1, guardPosition.y);
-            default -> new Point(-1, -1);
-        };
-    }
-
-    private static enum StepResult {
-        Continue, Loop, OffMap
-    }
-
-    private StepResult doStep() {
-        Point forward = getForward();
-        MapBlock nextStep = getBlock(forward);
-        if (nextStep == null) {
-            logDebug("Reached edge of area");
-            return StepResult.OffMap;
-        }
-        else if (nextStep.hasObstruction) {
-            switch (guardDirection) {
-                case MapDirection.N:
-                    guardDirection = MapDirection.E;
-                    logDebug("Turning E");
-                    return StepResult.Continue;
-                case MapDirection.E:
-                    guardDirection = MapDirection.S;
-                    logDebug("Turning S");
-                    return StepResult.Continue;
-                case MapDirection.S: 
-                    guardDirection = MapDirection.W;
-                    logDebug("Turning W");
-                    return StepResult.Continue;
-                case MapDirection.W:
-                    guardDirection = MapDirection.N;
-                    logDebug("Turning N");
-                    return StepResult.Continue;
-                default:
-                    log("Invalid direction");
-                    return StepResult.OffMap;
-            }
-        }
-        else if (nextStep.isRepeat(guardDirection)) {
-            logDebug("Completed loop");
-            return StepResult.Loop;
+        if (section == 1) {
+            while (map.doStep() == GuardMap.StepResult.Continue) {}
+            return map.getTotalCovered();
         }
         else {
-            logDebug("(" + guardPosition.x + ", " + guardPosition.y + ") to (" + forward.x + ", " + forward.y + ")");
-            guardPosition = forward;
-            nextStep.addGuardStep(guardDirection);
-            return StepResult.Continue;
-        }
-    }
-
-    private int getTotalCovered() {
-        int total = 0;
-        for (ArrayList<MapBlock> row : map) {
-            for (MapBlock m : row) {
-                if (m.guardInitialDirections.size() > 0)
-                    total++;
+            while (map.doStep() == GuardMap.StepResult.Continue) {}
+            map.recordUnaltered();
+            map.reset();
+            int countGoodObstructions = 0;
+            int testPoints = 0;
+            int maxX = map.getSizeX();
+            int maxY = map.getSizeY();
+            for (int x = 0; x < maxX; x++) {
+                for (int y = 0; y < maxY; y++) {
+                    MapBlock m = map.getValue(new Point(x, y));
+                    if (!m.unalteredInitialDirections.isEmpty()) {
+                        testPoints++;
+                        map.reset();
+                        m.hasObstruction = true;
+                        GuardMap.StepResult r = map.doStep();
+                        while (r == GuardMap.StepResult.Continue) {
+                            r = map.doStep();
+                        }
+                        if (r == GuardMap.StepResult.Loop) {
+                            countGoodObstructions++;
+                        }
+                        m.hasObstruction = false;
+                        if (testPoints % 1000 == 0) log("Tested " + testPoints + " points");
+                    }
+                }
             }
+            return countGoodObstructions;
         }
-        return total;
-    }
-
-    private static enum MapDirection {
-        N, E, S, W;
     }
 
     private static class MapBlock {
@@ -246,6 +109,130 @@ public class GuardGallivant extends tools.RunPuzzle {
 
         public void reset() {
             guardInitialDirections = new ArrayList<>();
+        }
+    }
+
+    private class GuardMap extends PuzzleMap<MapBlock> {
+        private MapPoint guardPosition;
+        private MapDirection guardDirection;
+        private MapPoint initialGuardPosition;
+        private MapDirection initialGuardDirection;
+
+        @Override
+        public MapBlock parse(char c) {
+            switch (c) {
+                case '.' :
+                    return new MapBlock(false);
+                case '#':
+                    return new MapBlock(true);
+                case '^':
+                    MapBlock m = new MapBlock(false);
+                    m.addGuardStep(MapDirection.N);
+                    guardDirection = MapDirection.N;
+                    // find guardPosition later
+                    return m;
+                default:
+                    return null;
+            }
+        }
+        
+        public void findGuardInitialPosition() {
+            this.guardPosition = null;
+            int maxX = this.getSizeX();
+            int maxY = this.getSizeY();
+            boolean foundGuard = false;
+            for (int x = 0; x < maxX; x++) {
+                for (int y = 0; y < maxY; y++) {
+                    if (!this.getValue(new Point(x, y)).guardInitialDirections.isEmpty()) {
+                        this.guardPosition = new MapPoint(x, y);
+                        foundGuard = true;
+                        break;
+                    }
+                }
+                if (foundGuard) break;
+            }
+            this.initialGuardDirection = this.guardDirection;
+            this.initialGuardPosition = this.guardPosition;
+        }
+
+        public void recordUnaltered() {
+            for (ArrayList<MapBlock> row : this.map) {
+                for (MapBlock m : row) {
+                    m.recordUnaltered();
+                }
+            }
+        }
+
+        public void reset() {
+            for (ArrayList<MapBlock> row : map) {
+                for (MapBlock m : row) {
+                    m.reset();
+                }
+            }
+            guardDirection = initialGuardDirection;
+            guardPosition = initialGuardPosition;
+        }
+
+        private static enum StepResult {
+            Continue, Loop, OffMap
+        }
+
+        private StepResult doStep() {
+            MapPoint forward = guardPosition.getNextPoint(guardDirection);
+            MapBlock nextStep = this.getValue(forward);
+            if (nextStep == null) {
+                logDebug("Reached edge of area");
+                return StepResult.OffMap;
+            }
+            else if (nextStep.hasObstruction) {
+                switch (guardDirection) {
+                    case MapDirection.N -> {
+                        guardDirection = MapDirection.E;
+                        logDebug("Turning E");
+                        return StepResult.Continue;
+                    }
+                    case MapDirection.E -> {
+                        guardDirection = MapDirection.S;
+                        logDebug("Turning S");
+                        return StepResult.Continue;
+                    } 
+                    case MapDirection.S -> {
+                        guardDirection = MapDirection.W;
+                        logDebug("Turning W");
+                        return StepResult.Continue;
+                    }
+                    case MapDirection.W -> {
+                        guardDirection = MapDirection.N;
+                        logDebug("Turning N");
+                        return StepResult.Continue;
+                    }
+                    default -> {
+                        log("Invalid direction");
+                        return StepResult.OffMap;
+                    }
+                }
+            }
+            else if (nextStep.isRepeat(guardDirection)) {
+                logDebug("Completed loop");
+                return StepResult.Loop;
+            }
+            else {
+                logDebug("(" + guardPosition.x + ", " + guardPosition.y + ") to (" + forward.x + ", " + forward.y + ")");
+                guardPosition = forward;
+                nextStep.addGuardStep(guardDirection);
+                return StepResult.Continue;
+            }
+        }
+
+        public int getTotalCovered() {
+            int total = 0;
+            for (ArrayList<MapBlock> row : map) {
+                for (MapBlock m : row) {
+                    if (!m.guardInitialDirections.isEmpty())
+                        total++;
+                }
+            }
+            return total;
         }
     }
 }

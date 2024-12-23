@@ -47,6 +47,14 @@ public class SimpleParallelQueue {
             workers[i].start();
         }
     }
+
+    public void await() throws InterruptedException {
+        if (running) {
+            for (Thread t : workers) {
+                t.join();
+            }
+        }
+    }
     
     public void setTasks(ArrayList<Runnable> tasks) {
         taskQueue = new ConcurrentLinkedQueue<>();

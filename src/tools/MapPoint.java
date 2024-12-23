@@ -36,4 +36,8 @@ public class MapPoint extends Point {
             default -> null;
         };
     }
+
+    public Point toPoint() {
+        return new Point(this.x, this.y);
+    }
 }
