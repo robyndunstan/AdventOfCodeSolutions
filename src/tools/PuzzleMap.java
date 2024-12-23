@@ -42,4 +42,15 @@ public abstract class PuzzleMap<T> {
             return null;
         }
     }
+
+    public int getSizeX() {
+        int maxX = 0;
+        for (ArrayList<T> row : map) {
+            maxX = Math.max(maxX, row.size());
+        }
+        return maxX;
+    }
+    public int getSizeY() {
+        return map.size();
+    }
 }
