@@ -4,13 +4,14 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import tools.FileController;
+import tools.MapDirection;
+import tools.MapPoint;
 import tools.PuzzleMap;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class HoofIt extends tools.RunPuzzle {
-    private ArrayList<ArrayList<Integer>> elevationMap;
+    private ElevationMap elevationMap;
 
     public HoofIt(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
@@ -46,58 +47,23 @@ public class HoofIt extends tools.RunPuzzle {
     @Override
     public Object doProcessing(int section, Object input) {
         String fileName = (String)input;
-        FileController file = new FileController(fileName);
-        elevationMap = new ArrayList<>();
-
+        elevationMap = new ElevationMap();
         try {
-            file.openInput();
-            String line = file.readLine();
-            while (line != null) {
-                line = line.trim();
-                ArrayList<Integer> row = new ArrayList<>();
-                for (char c : line.toCharArray()) {
-                    switch (c) {
-                        case '0':
-                        case '1':
-                        case '2':
-                        case '3':
-                        case '4':
-                        case '5':
-                        case '6':
-                        case '7':
-                        case '8':
-                        case '9':
-                            row.add(Integer.valueOf("" + c));
-                            break;
-                        case '.':
-                            row.add(-1);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                elevationMap.add(row);
-                line = file.readLine();
-            }
+            elevationMap.parseMap(fileName);
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
-        finally {
-            try {
-                file.closeFile();
-            } catch (IOException ex) {}
-        }
-        logDebug("Map " + elevationMap.get(0).size() + " by " + elevationMap.size());
+        logDebug("Map " + elevationMap.getSizeX() + " by " + elevationMap.getSizeY());
 
         HashMap<Point, ArrayList<Point>> paths = new HashMap<>();
-        for (int y = 0; y < elevationMap.size(); y++) {
-            ArrayList<Integer> row = elevationMap.get(y);
-            for (int x = 0; x < row.size(); x++) {
-                if (row.get(x) == 0) {
+        for (int y = 0; y < elevationMap.getSizeY(); y++) {
+            for (int x = 0; x < elevationMap.getSizeX(); x++) {
+                Point here = new Point(x, y);
+                if (elevationMap.getValue(here) == 0) {
                     ArrayList<Point> currentPoints = new ArrayList<>();
-                    currentPoints.add(new Point(x, y));
-                    paths.put(new Point(x, y), currentPoints);
+                    currentPoints.add(here);
+                    paths.put(here, currentPoints);
                 }
             }
         }
@@ -110,18 +76,23 @@ public class HoofIt extends tools.RunPuzzle {
                 ArrayList<Point> currentPoints = paths.get(pathStart);
                 for (Point c : currentPoints) {
                     logDebug("Testing point (" + c.x + ", " + c.y + ")");
-                    Point east = new Point(c.x + 1, c.y);
-                    logDebug("East " + getElevation(east));
-                    if (getElevation(east) == targetElevation) nextPoints.add(east);
-                    Point north = new Point(c.x, c.y - 1);
-                    logDebug("North " + getElevation(north));
-                    if (getElevation(north) == targetElevation) nextPoints.add(north);
-                    Point west = new Point(c.x - 1, c.y);
-                    logDebug ("West " + getElevation(west));
-                    if (getElevation(west) == targetElevation) nextPoints.add(west);
-                    Point south = new Point(c.x, c.y + 1);
-                    logDebug("South " + getElevation(south));
-                    if (getElevation(south) == targetElevation) nextPoints.add(south);
+                    MapPoint m = new MapPoint(c);
+                    Point east = m.getNextPoint(MapDirection.E).toPoint();
+                    Integer eastElevation = elevationMap.getValue(east);
+                    logDebug("East " + eastElevation);
+                    if (eastElevation != null && eastElevation == targetElevation) nextPoints.add(east);
+                    Point north = m.getNextPoint(MapDirection.N).toPoint();
+                    Integer northElevation = elevationMap.getValue(north);
+                    logDebug("North " + northElevation);
+                    if (northElevation != null && northElevation == targetElevation) nextPoints.add(north);
+                    Point west = m.getNextPoint(MapDirection.W).toPoint();
+                    Integer westElevation = elevationMap.getValue(west);
+                    logDebug ("West " + westElevation);
+                    if (westElevation != null && westElevation == targetElevation) nextPoints.add(west);
+                    Point south = m.getNextPoint(MapDirection.S).toPoint();
+                    Integer southElevation = elevationMap.getValue(south);
+                    logDebug("South " + southElevation);
+                    if (southElevation != null && southElevation == targetElevation) nextPoints.add(south);
                 }
                 if (section == 1) {
                     logDebug("Before dedup " + nextPoints.size());
@@ -160,20 +131,26 @@ public class HoofIt extends tools.RunPuzzle {
         return sumPaths;
     }
 
-    private int getElevation(Point p) {
-        if (p.y >= 0 && p.y < elevationMap.size() && p.x >= 0 && p.x < elevationMap.get(p.y).size()) {
-            return elevationMap.get(p.y).get(p.x);
-        }
-        else {
-            return -1;
-        }
-    }
-
     public class ElevationMap extends PuzzleMap<Integer> {
 
         @Override
         public Integer parse(char c, int x, int y) {
-            return Integer.valueOf("" + c);
+            switch (c) {
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    return Integer.valueOf("" + c);
+                case '.':
+                default:
+                    return -1;
+            }
         }
         
     }
