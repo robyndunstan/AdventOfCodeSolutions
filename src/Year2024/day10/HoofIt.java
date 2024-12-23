@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import tools.FileController;
+import tools.PuzzleMap;
 import tools.RunPuzzle;
 import tools.TestCase;
 
@@ -166,5 +167,14 @@ public class HoofIt extends tools.RunPuzzle {
         else {
             return -1;
         }
+    }
+
+    public class ElevationMap extends PuzzleMap<Integer> {
+
+        @Override
+        public Integer parse(char c, int x, int y) {
+            return Integer.valueOf("" + c);
+        }
+        
     }
 }

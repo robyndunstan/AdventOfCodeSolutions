@@ -46,7 +46,6 @@ public class GuardGallivant extends tools.RunPuzzle {
             ex.printStackTrace();
             return null;
         }
-        map.findGuardInitialPosition();
 
         if (section == 1) {
             while (map.doStep() == GuardMap.StepResult.Continue) {}
@@ -119,7 +118,7 @@ public class GuardGallivant extends tools.RunPuzzle {
         private MapDirection initialGuardDirection;
 
         @Override
-        public MapBlock parse(char c) {
+        public MapBlock parse(char c, int x, int y) {
             switch (c) {
                 case '.' :
                     return new MapBlock(false);
@@ -129,30 +128,13 @@ public class GuardGallivant extends tools.RunPuzzle {
                     MapBlock m = new MapBlock(false);
                     m.addGuardStep(MapDirection.N);
                     guardDirection = MapDirection.N;
-                    // find guardPosition later
+                    guardPosition = new MapPoint(x, y);
+                    this.initialGuardDirection = this.guardDirection;
+                    this.initialGuardPosition = this.guardPosition;
                     return m;
                 default:
                     return null;
             }
-        }
-        
-        public void findGuardInitialPosition() {
-            this.guardPosition = null;
-            int maxX = this.getSizeX();
-            int maxY = this.getSizeY();
-            boolean foundGuard = false;
-            for (int x = 0; x < maxX; x++) {
-                for (int y = 0; y < maxY; y++) {
-                    if (!this.getValue(new Point(x, y)).guardInitialDirections.isEmpty()) {
-                        this.guardPosition = new MapPoint(x, y);
-                        foundGuard = true;
-                        break;
-                    }
-                }
-                if (foundGuard) break;
-            }
-            this.initialGuardDirection = this.guardDirection;
-            this.initialGuardPosition = this.guardPosition;
         }
 
         public void recordUnaltered() {

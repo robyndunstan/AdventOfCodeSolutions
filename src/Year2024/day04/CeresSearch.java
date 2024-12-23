@@ -123,7 +123,7 @@ public class CeresSearch extends tools.RunPuzzle {
     private class WordSearch extends PuzzleMap<Character> {
 
         @Override
-        public Character parse(char c) {
+        public Character parse(char c, int x, int y) {
             return c;
         }
 

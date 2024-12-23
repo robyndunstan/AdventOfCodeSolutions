@@ -4,13 +4,12 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import tools.FileController;
+import tools.PuzzleMap;
 import tools.RunPuzzle;
 import tools.TestCase;
 
 public class ResonantCollinearity extends tools.RunPuzzle {
-    private ArrayList<ArrayList<Boolean>> antinodes;
-    private HashMap<Character, ArrayList<Point>> antennas;
+    private AntiNodes antennaMap;
 
     public ResonantCollinearity(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
@@ -43,45 +42,16 @@ public class ResonantCollinearity extends tools.RunPuzzle {
     @Override
     public Object doProcessing(int section, Object input) {
         String fileName = (String)input;
-        FileController file = new FileController(fileName);
-        antinodes = new ArrayList<>();
-        antennas = new HashMap<>();
-
+        antennaMap = new AntiNodes();
         try {
-            file.openInput();
-            String line = file.readLine();
-            while (line != null) {
-                line = line.trim();
-                ArrayList<Boolean> row = new ArrayList<>();   
-                for (char c : line.toCharArray()) {
-                    row.add(false);
-                    if (c != '.' && !Character.isWhitespace(c)) {
-                        Point a = new Point(row.size() - 1, antinodes.size());
-                        if (antennas.containsKey(c)) {
-                            antennas.get(c).add(a);
-                        }
-                        else {
-                            ArrayList<Point> aList = new ArrayList<>();
-                            aList.add(a);
-                            antennas.put(c, aList);
-                        }
-                    }
-                }
-                antinodes.add(row);
-                line = file.readLine();
-            }
+            antennaMap.parseMap(fileName);
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
-        finally {
-            try {
-                file.closeFile();
-            } catch (IOException ex) {}
-        }
 
-        for (char c : antennas.keySet()) {
-            ArrayList<Point> aList = antennas.get(c);
+        for (char c : antennaMap.antennas.keySet()) {
+            ArrayList<Point> aList = antennaMap.antennas.get(c);
             logDebug(aList.size() + " antennas of type " + c);
             if (aList.size() >= 2) {
                 for (int i = 0; i < aList.size() - 1; i++) {
@@ -110,24 +80,53 @@ public class ResonantCollinearity extends tools.RunPuzzle {
                 }
             }
         }
-        int totalAntinodes = 0;
-        for (ArrayList<Boolean> row : antinodes) {
-            for (boolean b : row) {
-                if (b) totalAntinodes++;
-            }
-        }
-        return totalAntinodes;
+        return antennaMap.totalAntinodes();
     }
 
     private boolean markAntinode(Point p) {
-        if (p.y >= 0 && p.y < antinodes.size() && p.x >= 0 && p.x < antinodes.get(p.y).size()) {
-            antinodes.get(p.y).set(p.x, true);
+        if (p.y >= 0 && p.y < antennaMap.getSizeY() && p.x >= 0 && p.x < antennaMap.getSizeX()) {
+            antennaMap.setValue(p, true);
             logDebug("Marking point (" + p.x + ", " + p.y + ")");
             return true;
         }
         else {
             logDebug("Off map");
             return false;
+        }
+    }
+
+    public class AntiNodes extends PuzzleMap<Boolean> {
+        public HashMap<Character, ArrayList<Point>> antennas;
+
+        public AntiNodes() {
+            super();
+            antennas = new HashMap<>();
+        }
+
+        @Override
+        public Boolean parse(char c, int x, int y) {
+            if (c != '.' && !Character.isWhitespace(c)) {
+                Point a = new Point(x, y);
+                if (antennas.containsKey(c)) {
+                    antennas.get(c).add(a);
+                }
+                else {
+                    ArrayList<Point> aList = new ArrayList<>();
+                    aList.add(a);
+                    antennas.put(c, aList);
+                }
+            }
+            return false;
+        }
+
+        public int totalAntinodes() {
+            int totalAntinodes = 0;
+            for (ArrayList<Boolean> row : map) {
+                for (boolean b : row) {
+                    if (b) totalAntinodes++;
+                }
+            }
+            return totalAntinodes;
         }
     }
 }

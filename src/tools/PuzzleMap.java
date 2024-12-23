@@ -15,20 +15,24 @@ public abstract class PuzzleMap<T> {
     private FileController input;
     protected ArrayList<ArrayList<T>> map;
 
-    public abstract T parse(char c);
+    public abstract T parse(char c, int x, int y);
 
     public void parseMap(String filename) throws IOException {
         input = new FileController(filename);
         map = new ArrayList<>();
         input.openInput();
         String line = input.readLine();
+        int x, y = 0;
         while (line != null) {
+            x = 0;
             line = line.trim();
             ArrayList<T> row = new ArrayList<>();
             for (char c : line.toCharArray()) {
-                row.add(parse(c));
+                row.add(parse(c, x, y));
+                x++;
             }
             map.add(row);
+            y++;
             line = input.readLine();
         }
         input.closeFile();
@@ -40,6 +44,12 @@ public abstract class PuzzleMap<T> {
         }
         else {
             return null;
+        }
+    }
+
+    public void setValue(Point p, T value) {
+        if (p.y >= 0 && p.y < map.size() && p.x >= 0 && p.x < map.get(p.y).size()) {
+            map.get(p.y).set(p.x, value);
         }
     }
 
