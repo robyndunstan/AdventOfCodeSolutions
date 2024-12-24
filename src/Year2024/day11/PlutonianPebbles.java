@@ -2,12 +2,17 @@ package Year2024.day11;
 
 import java.util.ArrayList;
 import tools.RunPuzzle;
+import tools.SimpleParallelQueue;
 import tools.TestCase;
 
 public class PlutonianPebbles extends tools.RunPuzzle {
+    private SimpleParallelQueue queue;
+    private long stoneCount;
+    
     public PlutonianPebbles(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
         debug = true;
+        queue = new SimpleParallelQueue(5);
     }
 
     public static void main(String[] args) {
@@ -39,41 +44,70 @@ public class PlutonianPebbles extends tools.RunPuzzle {
     public Object doProcessing(int section, Object input) {
         StoneInput stoneInput = (StoneInput)input;
         int targetBlinks = stoneInput.blinks;
-        if (section == 2) targetBlinks *= 3;
-        ArrayList<Stone> stones = new ArrayList<>();
+        //if (section == 2) targetBlinks *= 3; // This KILLED the computer. Figure out something else to try.
         String[] stoneStrings = stoneInput.initialStones.trim().split(" ");
         for (String s : stoneStrings) {
             if (s.trim().length() > 0) {
-                stones.add(new Stone(Long.parseLong(s), targetBlinks));
+                addStoneToQueue(new Stone(Long.parseLong(s), targetBlinks));
             }
         }
 
-        long stoneCount = 0l;
-        while (!stones.isEmpty()) {
-            Stone stone = stones.remove(0);
+        stoneCount = 0l;
+        queue.start();
+        try {
+            queue.await();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return getStoneCount();
+    }
+
+    private class StoneTask implements Runnable {
+        public Stone stone;
+
+        public StoneTask(Stone s) {
+            stone = s;
+        }
+
+        @Override
+        public void run() {
+            while (stone.remainingBlinks > 0) {
+                if (stone.value == 0) {
+                    stone.value = 1l;
+                    stone.remainingBlinks--;
+                }
+                else if (stone.value.toString().length() % 2 == 0) {
+                    String s = stone.value.toString();
+                    Stone s1 = new Stone(Long.parseLong(s.substring(0, s.length() / 2)), stone.remainingBlinks - 1);
+                    Stone s2 = new Stone(Long.parseLong(s.substring(s.length() / 2)), stone.remainingBlinks - 1);
+                    addStoneToQueue(s2);
+                    this.stone = s1;
+                }
+                else {
+                    stone.value *= 2024;
+                    stone.remainingBlinks--;
+                }
+                if (stone.remainingBlinks % 25 == 0) logDebug("Processing stone " + stone.value + " at blinks " + stone.remainingBlinks);
+            }
             if (stone.remainingBlinks == 0) {
-                stoneCount++;
-                if (stoneCount % 1000000 == 0) logDebug("Fully processed " + stoneCount + " stones with " + stones.size() + " remaining");
-            }
-            else if (stone.value == 0) {
-                stone.value = 1l;
-                stone.remainingBlinks--;
-                stones.add(0, stone);
-            }
-            else if (stone.value.toString().length() % 2 == 0) {
-                String s = stone.value.toString();
-                Stone s1 = new Stone(Long.parseLong(s.substring(0, s.length() / 2)), stone.remainingBlinks - 1);
-                Stone s2 = new Stone(Long.parseLong(s.substring(s.length() / 2)), stone.remainingBlinks - 1);
-                stones.add(0, s2);
-                stones.add(0, s1);
-            }
-            else {
-                stone.value *= 2024;
-                stone.remainingBlinks--;
-                stones.add(0, stone);
+                incrementStoneCount();
+                long sc = getStoneCount();
+                if (sc % 1_000_000 == 0) logDebug("Fully processed " + sc + " stones");
             }
         }
+        
+    }
+
+    synchronized public void incrementStoneCount() {
+        stoneCount++;
+    }
+    synchronized public long getStoneCount() {
         return stoneCount;
+    }
+
+    synchronized private void addStoneToQueue(Stone s) {
+        queue.addTask(new StoneTask(s));
     }
 
     private static class Stone {

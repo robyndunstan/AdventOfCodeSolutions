@@ -61,6 +61,10 @@ public class SimpleParallelQueue {
         taskQueue.addAll(tasks);
     }
 
+    public void addTask(Runnable task) {
+        taskQueue.add(task);
+    }
+
     /**
      * This class defines the worker threads that carry out the tasks. 
      * A WorkerThread runs in a loop in which it retrieves a task from the 
