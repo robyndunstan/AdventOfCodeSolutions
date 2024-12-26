@@ -1,21 +1,21 @@
 package Year2024.day11;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import tools.FileController;
 import tools.RunPuzzle;
-import tools.SimpleParallelQueue;
 import tools.TestCase;
 
 public class PlutonianPebbles extends tools.RunPuzzle {
-    private SimpleParallelQueue queue;
     private long stoneCount;
     
     public PlutonianPebbles(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
         debug = true;
-        queue = new SimpleParallelQueue(5);
     }
 
     public static void main(String[] args) {
+        //RunPuzzle p = new PlutonianPebbles(10, "Plutonian Pebbles", new StoneInput(test2stones, test2blinks5));
         RunPuzzle p = new PlutonianPebbles(10, "Plutonian Pebbles", new StoneInput(puzzleStones, puzzleBlinks));
         //p.setLogFile("src\\Year2024\\day11\\log.txt");
         p.run();
@@ -44,79 +44,68 @@ public class PlutonianPebbles extends tools.RunPuzzle {
     public Object doProcessing(int section, Object input) {
         StoneInput stoneInput = (StoneInput)input;
         int targetBlinks = stoneInput.blinks;
-        //if (section == 2) targetBlinks *= 3; // This KILLED the computer. Figure out something else to try.
+        if (section == 2) targetBlinks *= 3; 
         String[] stoneStrings = stoneInput.initialStones.trim().split(" ");
-        for (String s : stoneStrings) {
-            if (s.trim().length() > 0) {
-                addStoneToQueue(new Stone(Long.parseLong(s), targetBlinks));
-            }
-        }
-
-        stoneCount = 0l;
-        queue.start();
+        FileController outputFile;
         try {
-            queue.await();
-        } catch (InterruptedException ex) {
+            outputFile = getOutputFile(0);
+        } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
-        return getStoneCount();
-    }
-
-    private class StoneTask implements Runnable {
-        public Stone stone;
-
-        public StoneTask(Stone s) {
-            stone = s;
-        }
-
-        @Override
-        public void run() {
-            while (stone.remainingBlinks > 0) {
-                if (stone.value == 0) {
-                    stone.value = 1l;
-                    stone.remainingBlinks--;
-                }
-                else if (stone.value.toString().length() % 2 == 0) {
-                    String s = stone.value.toString();
-                    Stone s1 = new Stone(Long.parseLong(s.substring(0, s.length() / 2)), stone.remainingBlinks - 1);
-                    Stone s2 = new Stone(Long.parseLong(s.substring(s.length() / 2)), stone.remainingBlinks - 1);
-                    addStoneToQueue(s2);
-                    this.stone = s1;
-                }
-                else {
-                    stone.value *= 2024;
-                    stone.remainingBlinks--;
-                }
-                if (stone.remainingBlinks % 25 == 0) logDebug("Processing stone " + stone.value + " at blinks " + stone.remainingBlinks);
-            }
-            if (stone.remainingBlinks == 0) {
-                incrementStoneCount();
-                long sc = getStoneCount();
-                if (sc % 1_000_000 == 0) logDebug("Fully processed " + sc + " stones");
+        for (String s : stoneStrings) {
+            if (s.trim().length() > 0) {
+                outputFile.writeLine(s);
             }
         }
-        
-    }
+        try {
+            outputFile.closeFile();
+        } catch (IOException ex) {}
 
-    synchronized public void incrementStoneCount() {
-        stoneCount++;
-    }
-    synchronized public long getStoneCount() {
+        long stoneCount = 0l;
+        for (int currentBlink = 1; currentBlink <= targetBlinks; currentBlink++) {
+            FileController inputFile = new FileController("src\\Year2024\\day11\\data\\blink" + String.format("%02d", currentBlink - 1) + ".txt");
+            stoneCount = 0l;
+            try {
+                inputFile.openInput();
+                outputFile = getOutputFile(currentBlink);
+                outputFile.openOutput();
+                String line = inputFile.readLine();
+                while (line != null) {
+                    line = line.trim();
+                    if (line.equals("0")) {
+                        outputFile.writeLine("1");
+                        stoneCount++;
+                    }
+                    else if (line.length() % 2 == 0) {
+                        outputFile.writeLine(line.substring(0, line.length() / 2));
+                        Long stone = Long.valueOf(line.substring(line.length() / 2));
+                        outputFile.writeLine(stone.toString());
+                        stoneCount += 2;
+                    }
+                    else {
+                        Long stone = Long.parseLong(line) * 2024;
+                        outputFile.writeLine(stone.toString());
+                        stoneCount++;
+                    }
+                    line = inputFile.readLine();
+                }
+                if (currentBlink % 5 == 0) logDebug(stoneCount + " stones after " + currentBlink + " blinks");
+                inputFile.closeFile();
+                outputFile.closeFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
         return stoneCount;
     }
 
-    synchronized private void addStoneToQueue(Stone s) {
-        queue.addTask(new StoneTask(s));
-    }
-
-    private static class Stone {
-        public Long value;
-        public int remainingBlinks;
-        public Stone(long value, int blinks) {
-            this.value = value;
-            this.remainingBlinks = blinks;
-        }
+    private FileController getOutputFile(int currentBlinks) throws IOException {
+        FileController f = new FileController("src\\Year2024\\day11\\data\\blink" + String.format("%02d", currentBlinks) + ".txt");
+        f.deleteFile();
+        f.openOutput();
+        return f;
     }
 
     private static String test1stones = "0 1 10 99 999"; 
