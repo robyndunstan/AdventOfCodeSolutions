@@ -101,17 +101,15 @@ public class RestroomRedoubt extends tools.RunPuzzle {
         else { // 7792 too low
             int startTime = 0; // change this with each run as tree form gets refined
             runRobots(startTime); // get to initial position
-            int time = startTime;
-            while (!checkForTree() && time < Integer.MAX_VALUE) {
+            while (!checkForTree() && robots.get(0).time() < Integer.MAX_VALUE) {
                 runRobots(1);
-                time++;
-                if (time % 100_000 == 0) {
+                if (robots.get(0).time() % 100_000 == 0) {
                     logRobots(true);
-                    logDebug(time + " seconds");
+                    logDebug(robots.get(0).time() + " seconds");
                 } 
             }
             logRobots(false);
-            return time;
+            return robots.get(0).time();
         }
     }
 
@@ -176,13 +174,18 @@ public class RestroomRedoubt extends tools.RunPuzzle {
 
     private class Robot {
         public Point position, velocity;
+        private int time; 
         public Robot() {
             position = new Point();
             velocity = new Point();
+            time = 0;
         }
         public Robot(String s) {
             this();
             parse(s);
+        }
+        public int time() {
+            return this.time;
         }
         private void parse(String s) { // p=#,# v=#,#
             int i1 = s.indexOf("p=");
@@ -203,6 +206,7 @@ public class RestroomRedoubt extends tools.RunPuzzle {
             if (position.x < 0) position.x += dx;
             position.y = (position.y + velocity.y * steps) % dy;
             if (position.y < 0) position.y += dy;
+            time += steps; 
         }
     }
 }
