@@ -2,6 +2,7 @@ package Year2024.day16;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import tools.MapDirection;
 import tools.MapPoint;
 import tools.RunPuzzle;
@@ -27,6 +28,8 @@ public class ReindeerMaze extends tools.RunPuzzle {
         ArrayList<TestCase> tests = new ArrayList<>();
         tests.add(new TestCase<>(1, "src\\Year2024\\day16\\data\\test1File", 7036));
         tests.add(new TestCase<>(1, "src\\Year2024\\day16\\data\\test2File", 11048));
+        tests.add(new TestCase<>(2, "src\\Year2024\\day16\\data\\test1File", 45));
+        tests.add(new TestCase<>(2, "src\\Year2024\\day16\\data\\test2File", 64));
         return tests;
     }
 
@@ -44,64 +47,84 @@ public class ReindeerMaze extends tools.RunPuzzle {
             ex.printStackTrace();
             return null;
         }
-        if (section == 1) {
-            ArrayList<Reindeer> paths = new ArrayList<>();
-            Reindeer rStart = new Reindeer();
-            rStart.direction = maze.reindeerStartDirection;
-            rStart.position = maze.reindeerStartPosition;
-            rStart.score = 0;
-            paths.add(rStart);
-            int minScore = Integer.MAX_VALUE;
-            while (!paths.isEmpty()) {
-                ArrayList<Reindeer> nextPaths = new ArrayList<>();
-                for (Reindeer r : paths) {
-                    if (r.position.x == maze.mazeEnd.x && r.position.y == maze.mazeEnd.y) {
-                        minScore = Math.min(minScore, r.score);
+        ArrayList<Reindeer> paths = new ArrayList<>();
+        Reindeer rStart = new Reindeer();
+        rStart.direction = maze.reindeerStartDirection;
+        rStart.position = maze.reindeerStartPosition;
+        rStart.score = 0;
+        rStart.path.add(maze.reindeerStartPosition);
+        paths.add(rStart);
+        int minScore = Integer.MAX_VALUE;
+        ArrayList<Reindeer> winners = new ArrayList<>();
+        while (!paths.isEmpty()) {
+            ArrayList<Reindeer> nextPaths = new ArrayList<>();
+            for (Reindeer r : paths) {
+                if (r.position.x == maze.mazeEnd.x && r.position.y == maze.mazeEnd.y) {
+                    if (minScore > r.score) {
+                        minScore = r.score;
+                        winners = new ArrayList<>();
+                        winners.add(r);
                     }
-                    else if (!maze.getValue(r.position) && r.score < minScore) {
-                        MapPoint forward = r.position.getNextPoint(r.direction);
-                        if (!maze.getValue(forward)) {
-                            Reindeer rNew = new Reindeer();
-                            rNew.direction = r.direction;
-                            rNew.position = forward;
-                            rNew.score = r.score + 1;
-                        }
-                        Reindeer rLeft = new Reindeer();
-                        rLeft.position = r.position;
-                        rLeft.score = r.score + 1000;
-                        Reindeer rRight = new Reindeer();
-                        rRight.position = r.position;
-                        rRight.score = r.score + 1000;
-                        switch(r.direction) {
-                            case MapDirection.E:
-                                rLeft.direction = MapDirection.N;
-                                rRight.direction = MapDirection.S;
-                                break;
-                            case MapDirection.N:
-                                rLeft.direction = MapDirection.W;
-                                rRight.direction = MapDirection.E;
-                                break;
-                            case MapDirection.W:
-                                rLeft.direction = MapDirection.S;
-                                rRight.direction = MapDirection.N;
-                                break;
-                            case MapDirection.S:
-                                rLeft.direction = MapDirection.E;
-                                rRight.direction = MapDirection.W;
-                                break;
-                        }
+                    else if (minScore == r.score) {
+                        winners.add(r);
+                    }
+                }
+                else if (!maze.getValue(r.position).hasWall && r.score < minScore) {
+                    MapPoint forward = r.position.getNextPoint(r.direction);
+                    MapBlock fBlock = maze.getValue(forward);
+                    Reindeer rForward = new Reindeer(r);
+                    rForward.movePosition(forward);
+                    if (!fBlock.hasWall && fBlock.isBetterPath(rForward)) {
+                        nextPaths.add(rForward);
+                    }
+                    Reindeer rLeft = new Reindeer(r);
+                    Reindeer rRight = new Reindeer(r);
+                    switch(r.direction) {
+                        case MapDirection.E:
+                            rLeft.moveDirection(MapDirection.N);
+                            rRight.moveDirection(MapDirection.S);
+                            break;
+                        case MapDirection.N:
+                        rLeft.moveDirection(MapDirection.W);
+                        rRight.moveDirection(MapDirection.E);
+                            break;
+                        case MapDirection.W:
+                        rLeft.moveDirection(MapDirection.S);
+                        rRight.moveDirection(MapDirection.N);
+                            break;
+                        case MapDirection.S:
+                        rLeft.moveDirection(MapDirection.E);
+                        rRight.moveDirection(MapDirection.W);
+                            break;
+                    }
+                    MapBlock hereBlock = maze.getValue(r.position);
+                    if (hereBlock.isBetterPath(rLeft)) {
                         nextPaths.add(rLeft);
+                    }
+                    if (hereBlock.isBetterPath(rRight)) {
                         nextPaths.add(rRight);
                     }
-                    // Avoid repeats/circles
-                    maze.setValue(r.position, true);
                 }
-                paths = nextPaths;
             }
+            paths = nextPaths;
+        }
+        if (section == 1) {
             return minScore;
         }
         else {
-            return null;
+            boolean[][] winPaths = new boolean[maze.getSizeX()][maze.getSizeY()];
+            for (Reindeer r : winners) {
+                for (MapPoint p : r.path) {
+                    winPaths[p.x][p.y] = true;
+                }
+            }
+            int count = 0;
+            for (int i = 0; i < maze.getSizeX(); i++) {
+                for (int j = 0; j < maze.getSizeY(); j++) {
+                    if (winPaths[i][j]) count++;
+                }
+            }
+            return count;
         }
     }
 
@@ -109,14 +132,68 @@ public class ReindeerMaze extends tools.RunPuzzle {
         public MapPoint position;
         public MapDirection direction;
         public int score;
+        public ArrayList<MapPoint> path;
         public Reindeer() {
             position = new MapPoint();
             score = 0;
             direction = MapDirection.E;
+            path = new ArrayList<>();
+        }
+        public Reindeer(Reindeer r) {
+            this();
+            copyReindeer(r);
+        }
+        public void copyReindeer(Reindeer r) {
+            this.position = r.position;
+            this.direction = r.direction;
+            this.score = r.score;
+            for (MapPoint m : r.path) {
+                this.path.add(m);
+            }
+        }
+        public void movePosition(MapPoint m) {
+            this.position = m;
+            this.path.add(m);
+            this.score += 1;
+        }
+        public void moveDirection(MapDirection d) {
+            this.direction = d;
+            this.score += 1000;
         }
     }
 
-    private class MazeWalls extends tools.PuzzleMap<Boolean> {
+    private class MapBlock {
+        public boolean hasWall;
+        private HashMap<MapDirection, Integer> history;
+
+        public MapBlock() {
+            hasWall = false;
+            history = new HashMap<>();
+        }
+        public MapBlock(boolean hasWall) {
+            this();
+            this.hasWall = hasWall;
+        }
+
+        public boolean isBetterPath(Reindeer r) {
+            if (!history.containsKey(r.direction)) {
+                history.put(r.direction, r.score);
+                return true;
+            }
+            else {
+                int historyScore = history.get(r.direction);
+                if (historyScore >= r.score) {
+                    history.put(r.direction, r.score);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    private class MazeWalls extends tools.PuzzleMap<MapBlock> {
         MapPoint reindeerStartPosition, mazeEnd;
         MapDirection reindeerStartDirection;
 
@@ -127,19 +204,19 @@ public class ReindeerMaze extends tools.RunPuzzle {
         }
 
         @Override
-        public Boolean parse(char c, int x, int y) {
+        public MapBlock parse(char c, int x, int y) {
             switch(c) {
-                case '#': return true;
-                case '.': return false;
+                case '#': return new MapBlock(true);
+                case '.': return new MapBlock(false);
                 case 'E': 
                     mazeEnd = new MapPoint(x, y);
-                    return false;
+                    return new MapBlock(false);
                 case 'S':
                     reindeerStartDirection = MapDirection.E;
                     reindeerStartPosition = new MapPoint(x, y);
-                    return false;
+                    return new MapBlock(false);
                 default:
-                    return false;
+                    return new MapBlock(false);
             }
         }
     }
