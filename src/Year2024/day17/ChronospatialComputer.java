@@ -5,14 +5,14 @@ import tools.RunPuzzle;
 import tools.TestCase;
 
 public class ChronospatialComputer extends tools.RunPuzzle {
-    private int a, b, c;
+    private long a, b, c;
     private String program;
     private int pointer;
     private StringBuilder output;
 
     public ChronospatialComputer(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
-        debug = false;
+        debug = true;
     }
 
     public static void main(String[] args) {
@@ -38,7 +38,7 @@ public class ChronospatialComputer extends tools.RunPuzzle {
     }
 
     @Override
-    public Object doProcessing(int section, Object input) {
+    public Object doProcessing(int section, Object input) { // section 2, 2147483647 low
         ComputerInput initialState = (ComputerInput)input;
         if (section == 1) {
             return runProgram(section, initialState);
@@ -46,10 +46,12 @@ public class ChronospatialComputer extends tools.RunPuzzle {
         else {
             initialState.a = 0;
             String programOutput = runProgram(section, initialState);
-            while (!programOutput.equals(this.program) && initialState.a < Integer.MAX_VALUE) {
+            while (!programOutput.equals(this.program) && initialState.a < Long.MAX_VALUE) {
                 initialState.a++;
                 programOutput = runProgram(section, initialState);
+                if (initialState.a % 10_000_000 == 0) logDebug("Testing " + initialState.a);
             }
+            logDebug(programOutput);
             return "" + initialState.a;
         }
     }
@@ -65,7 +67,7 @@ public class ChronospatialComputer extends tools.RunPuzzle {
             char opCode = program.charAt(pointer);
             char operand = program.charAt(pointer + 2);
             int literalOperandValue = Integer.parseInt("" + operand);
-            int comboOperandValue = 0;
+            long comboOperandValue = 0;
             switch (operand) {
                 case '0':
                 case '1':
@@ -112,7 +114,7 @@ public class ChronospatialComputer extends tools.RunPuzzle {
                     pointer += 4;
                     break;
                 case '5': // out
-                    int outResult = comboOperandValue % 8;
+                    long outResult = comboOperandValue % 8;
                     if (output.length() > 0) {
                         output.append(",");
                     }
@@ -137,7 +139,7 @@ public class ChronospatialComputer extends tools.RunPuzzle {
     }
 
     private static class ComputerInput {
-        int a, b, c;
+        long a, b, c;
         String program;
         public ComputerInput(int a, int b, int c, String program) {
             this.a = a;
