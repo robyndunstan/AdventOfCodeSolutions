@@ -11,8 +11,9 @@ import tools.TestCase;
 
 public class RamRun extends tools.RunPuzzle {
     private int maxCoord;
-    private int ns;
+    private int targetNs;
     private ArrayList<Point> fallingBytes;
+    private int fallingIndex;
     private int[][] map;
 
     public RamRun(int dayNumber, String dayTitle, Object puzzleInput) {
@@ -31,6 +32,7 @@ public class RamRun extends tools.RunPuzzle {
     public ArrayList<TestCase> createTestCases() {
         ArrayList<TestCase> tests = new ArrayList<>();
         tests.add(new TestCase<>(1, "src\\Year2024\\day18\\data\\test1File", 22));
+        tests.add(new TestCase<>(2, "src\\Year2024\\day18\\data\\test1File", 22)); // actual result is 6,1 the point on line 22 (index + 1) in the file
         return tests;
     }
 
@@ -49,7 +51,7 @@ public class RamRun extends tools.RunPuzzle {
             int splitIndex = line.indexOf(";");
             if (splitIndex != -1) {
                 maxCoord = Integer.parseInt(line.substring(0, splitIndex).trim());
-                ns = Integer.parseInt(line.substring(splitIndex + 1).trim());
+                targetNs = Integer.parseInt(line.substring(splitIndex + 1).trim());
             }
             line = file.readLine();
             fallingBytes = new ArrayList<>();
@@ -73,36 +75,100 @@ public class RamRun extends tools.RunPuzzle {
             catch (IOException e) {}
         }
 
-        logDebug(ns + " time and " + fallingBytes.size() + " bytes");
+        logDebug(targetNs + " time and " + fallingBytes.size() + " bytes");
         map = new int[maxCoord + 1][maxCoord + 1];
-        for (int i = 0; i < Math.min(ns, fallingBytes.size()); i++) {
+
+        if (section == 1) {
+            doDrop(targetNs);
+            findPaths();
+            return map[maxCoord][maxCoord];
+        }
+        else {
+            doDrop(targetNs);
+            findPaths();
+            while (map[maxCoord][maxCoord] != 0) {
+                logDebug(fallingIndex + " fallen bytes");
+                resetPaths();
+                doDrop();
+                findPaths();
+            }
+            return fallingIndex + 1; // +1 is for first line with dimensions
+        }
+    }
+
+    private void resetPaths() {
+        for (int x = 0; x <= maxCoord; x++) {
+            for (int y = 0; y <= maxCoord; y++) {
+                if (map[x][y] != -1) map[x][y] = 0;
+            }
+        }
+    }
+
+    private void doDrop() {
+        Point p = fallingBytes.get(fallingIndex);
+        map[p.x][p.y] = -1;
+        fallingIndex++;
+    }
+    private void doDrop(int ns) {
+        fallingIndex = Math.min(ns, fallingBytes.size());
+        for (int i = 0; i < fallingIndex; i++) {
             Point p = fallingBytes.get(i);
             map[p.x][p.y] = -1;
         }
+    }
 
+    private void findPaths() {
         if (map[0][1] != -1) map[0][1] = 1;
         if (map[1][0] != -1) map[1][0] = 1;
         int currentSteps = 1;
-        while (map[maxCoord][maxCoord] == 0) {
+        boolean changes = true;
+        while (map[maxCoord][maxCoord] == 0 && changes) {
+            changes = false;
             for (int x = 0; x <= maxCoord; x++) {
                 for (int y = 0; y <= maxCoord; y++) {
                     if (map[x][y] == currentSteps) {
+                        ArrayList<MapPoint> nextPoints = new ArrayList<>();
                         MapPoint m = new MapPoint(x, y);
-                        MapPoint mN = m.getNextPoint(MapDirection.N);
-                        if (getSteps(mN) == 0) map[mN.x][mN.y] = currentSteps + 1;
-                        MapPoint mE = m.getNextPoint(MapDirection.E);
-                        if (getSteps(mE) == 0) map[mE.x][mE.y] = currentSteps + 1;
-                        MapPoint mS = m.getNextPoint(MapDirection.S);
-                        if (getSteps(mS) == 0) map[mS.x][mS.y] = currentSteps + 1;
-                        MapPoint mW = m.getNextPoint(MapDirection.W);
-                        if (getSteps(mW) == 0) map[mW.x][mW.y] = currentSteps + 1;
+                        nextPoints.add(m.getNextPoint(MapDirection.N));
+                        nextPoints.add(m.getNextPoint(MapDirection.S));
+                        nextPoints.add(m.getNextPoint(MapDirection.E));
+                        nextPoints.add(m.getNextPoint(MapDirection.W));
+                        for (MapPoint n : nextPoints) {
+                            if (getSteps(n) == 0) {
+                                map[n.x][n.y] = currentSteps + 1;
+                                changes = true;
+                            }
+                        }
                     }
                 }
             }
             currentSteps++;
         }
 
-        return map[maxCoord][maxCoord];
+        if (debug) {
+            StringBuilder walls = new StringBuilder();
+            StringBuilder steps = new StringBuilder();
+            for (int y = 0; y <= maxCoord; y++) {
+                StringBuilder w = new StringBuilder();
+                StringBuilder s = new StringBuilder();
+                for (int x = 0; x <= maxCoord; x++) {
+                    if (map[x][y] == -1) {
+                        w.append('#');
+                        s.append('#');
+                    }
+                    else  {
+                        w.append('.');
+                        s.append(map[x][y] % 10);
+                    }
+                }
+                walls.append(w);
+                walls.append('\n');
+                steps.append(s);
+                steps.append('\n');
+            }
+            logDebug(walls.toString());
+            logDebug(steps.toString());
+        }
     }
 
     private int getSteps(Point p) {
