@@ -2,6 +2,7 @@ package Year2024.day19;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import tools.FileController;
 import tools.RunPuzzle;
 import tools.TestCase;
@@ -9,10 +10,11 @@ import tools.TestCase;
 public class LinenLayout extends tools.RunPuzzle {
     String[] towels;
     ArrayList<String> patterns;
+    HashMap<String, Long> patternCount;
 
     public LinenLayout(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
-        debug = true;
+        debug = false;
     }
 
     public static void main(String[] args) {
@@ -25,14 +27,14 @@ public class LinenLayout extends tools.RunPuzzle {
     @Override
     public ArrayList<TestCase> createTestCases() {
         ArrayList<TestCase> tests = new ArrayList<>();
-        tests.add(new TestCase<>(1, "src\\Year2024\\day19\\data\\test1File", 6));
-        tests.add(new TestCase<>(2, "src\\Year2024\\day19\\data\\test1File", 16));
+        tests.add(new TestCase<>(1, "src\\Year2024\\day19\\data\\test1File", 6l));
+        tests.add(new TestCase<>(2, "src\\Year2024\\day19\\data\\test1File", 16l));
         return tests;
     }
 
     @Override
     public void printResult(Object result) {
-        log(defaultOutputIndent + (Integer)result);
+        log(defaultOutputIndent + (Long)result);
     }
 
     @Override
@@ -64,8 +66,8 @@ public class LinenLayout extends tools.RunPuzzle {
         }
 
         if (section == 1) {
-            int validCount = 0;
-            int totalCount = 0;
+            long validCount = 0l;
+            long totalCount = 0l;
             for (String p : patterns) {
                 logDebug(p);
                 boolean v = isValidPattern(p);
@@ -77,19 +79,23 @@ public class LinenLayout extends tools.RunPuzzle {
             return validCount;
         } 
         else {
-            int count = 0;
+            long count = 0;
+            patternCount = new HashMap<>();
             for (String p : patterns) {
-                int subCount = countValidArrangements(p);
+                long subCount = countValidArrangements(p);
                 count += subCount;
-                logDebug(subCount + " valid arrangements for " + p);
+                log(subCount + " valid arrangements for " + p);
             }
             return count;
         }
     }
 
-    private int countValidArrangements(String p) {
+    private long countValidArrangements(String p) {
         if (!isValidPattern(p)) return 0;
-        int count = 0;
+        if (patternCount.containsKey(p)) {
+            return patternCount.get(p);
+        }
+        long count = 0;
         for (String t : towels) {
             if (p.equals(t)) count++;
             else if (p.startsWith(t)) {
@@ -104,6 +110,7 @@ public class LinenLayout extends tools.RunPuzzle {
             }
         }
         if (p.length() > 15) logDebug("\t" + count + " valid arrangements for " + p);
+        patternCount.put(p, count);
         return count;
     }
 
