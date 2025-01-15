@@ -19,7 +19,7 @@ public class RaceCondition extends tools.RunPuzzle {
     public static void main(String[] args) {
         //RunPuzzle p = new RaceCondition(20, "Race Condition", test4);
         RunPuzzle p = new RaceCondition(20, "Race Condition", puzzle);
-        //p.setLogFile("src\\Year2024\\day20\\data\\log.txt");
+        //p.setLogFile("src\\Year2024\\day20\\log.txt");
         p.run();
     }
 
@@ -37,6 +37,7 @@ public class RaceCondition extends tools.RunPuzzle {
         tests.add(new TestCase<>(1, test9, 16));
         tests.add(new TestCase<>(1, test10, 30));
         tests.add(new TestCase<>(1, test11, 44));
+        tests.add(new TestCase<>(2, test12, 32 + 31 + 29 + 39 + 25 + 23 + 20 + 19 + 12 + 14 + 12 + 22 + 4 + 3));
         return tests;
     }
 
@@ -100,6 +101,7 @@ public class RaceCondition extends tools.RunPuzzle {
     private static PuzzleInput test9 = new PuzzleInput("src\\Year2024\\day20\\data\\test1file", 6);
     private static PuzzleInput test10 = new PuzzleInput("src\\Year2024\\day20\\data\\test1file", 4);
     private static PuzzleInput test11 = new PuzzleInput("src\\Year2024\\day20\\data\\test1file", 2);
+    private static PuzzleInput test12 = new PuzzleInput("src\\Year2024\\day20\\data\\test1file", 50);
     private static PuzzleInput puzzle = new PuzzleInput("src\\Year2024\\day20\\data\\puzzleFile", 100);
 
     private static class PuzzleInput {
