@@ -6,6 +6,8 @@ import tools.RunPuzzle;
 import tools.TestCase;
 
 public class KeypadConundrum extends tools.RunPuzzle {
+    ArrayList<Keypad> keypads;
+
     public KeypadConundrum(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
         debug = false;
@@ -31,29 +33,83 @@ public class KeypadConundrum extends tools.RunPuzzle {
     }
 
     @Override
-    public Object doProcessing(int section, Object input) {
-        return null;
+    public Object doProcessing(int section, Object input) { // 255888 too high
+        String[] codes = (String[])input;
+        keypads = new ArrayList<>();
+        keypads.add(new NumericKeypad());
+        keypads.add(new DirectionalKeypad());
+        keypads.add(new DirectionalKeypad());
+        int complexityCount = 0;
+        for (String s : codes) {
+            char[] previousButton = new char[keypads.size()];
+            char[] nextButton = new char[keypads.size()];
+            StringBuilder[] validInstructions = new StringBuilder[keypads.size()];
+            for (int i = 0; i < keypads.size(); i++) {
+                previousButton[i] = 'A';
+                validInstructions[i] = new StringBuilder();
+            }
+            for (char c : s.toCharArray()) {
+                nextButton[0] = c;
+                try {
+                    validInstructions[0].append(keypads.get(0).getInstruction(previousButton[0], nextButton[0]));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    return null;
+                }
+                previousButton[0] = nextButton[0];
+            }
+            for (int i = 1; i < keypads.size(); i++) {
+                Keypad k = keypads.get(i);
+                for (char c : validInstructions[i - 1].toString().toCharArray()) {
+                    nextButton[i] = c;
+                    try {
+                        validInstructions[i].append(k.getInstruction(previousButton[i], nextButton[i]));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        return null;
+                    }
+                    previousButton[i] = nextButton[i];
+                }
+            }
+            logDebug("Code " + s + " length " + validInstructions[keypads.size() - 1].length());
+            for (int i = 1; i < keypads.size(); i++) logDebug("\t" + validInstructions[i].toString());
+            complexityCount += Integer.parseInt(s.substring(0, s.length() - 1)) * validInstructions[keypads.size() - 1].length();
+        }
+        return complexityCount;
     }
 
     public abstract class Keypad {
         public Point position;
         public Point start;
+        protected Exception e = new Exception("Robot panics");
+        protected ArrayList<Character> blankColumn;
+        protected ArrayList<Character> blankRow;
+
         public abstract char getButton(Point p) throws Exception;
         public abstract Point getPosition(char c) throws Exception;
-        
-        public Character doMove(char instruction) throws Exception {
-            switch(instruction) {
-                case '^' -> position.y--;
-                case 'A' -> {
-                    return getButton(position);
-                }
-                case '<' -> position.x--;
-                case 'v' -> position.y++;
-                case '>' -> position.x++;
-                default -> throw new Exception("Robot panics");
+
+        public String getInstruction(char prev, char next) throws Exception {
+            Point pP = this.getPosition(prev);
+            Point nP = this.getPosition(next);
+            Point delta = new Point(nP.x - pP.x, nP.y - pP.y);
+            char horiz = delta.x >= 0 ? '>' : '<';
+            char vert = delta.y >= 0 ? 'v' : '^';
+            StringBuilder s = new StringBuilder();
+            if (blankColumn.contains(prev) && blankRow.contains(next)) {
+                s.repeat(horiz, Math.abs(delta.x));
+                s.repeat(vert, Math.abs(delta.y));
             }
-            getButton(position); // throw Exception if over blank
-            return null;
+            else if (blankColumn.contains(next) && blankRow.contains(prev)) {
+                s.repeat(vert, Math.abs(delta.y));
+                s.repeat(horiz, Math.abs(delta.x));
+            }
+            else {
+                s.repeat(horiz, Math.abs(delta.x));
+                s.repeat(vert, Math.abs(delta.y));
+            }
+            s.append('A');
+            logDebug("\t\tFrom " + prev + " to " + next + " is " + s.toString());
+            return s.toString();
         }
     }
 
@@ -68,6 +124,13 @@ public class KeypadConundrum extends tools.RunPuzzle {
             super();
             this.start = new Point(2, 3);
             this.position = new Point(start.x, start.y);
+            blankColumn = new ArrayList<>();
+            blankColumn.add('1');
+            blankColumn.add('4');
+            blankColumn.add('7');
+            blankRow = new ArrayList<>();
+            blankRow.add('0');
+            blankRow.add('A');
         }
 
         @Override
@@ -84,7 +147,7 @@ public class KeypadConundrum extends tools.RunPuzzle {
                         case 2 -> {
                             return '1';
                         }
-                        default -> throw new Exception("Robot panics");
+                        default -> throw e;
                     }
                 }
 
@@ -102,7 +165,7 @@ public class KeypadConundrum extends tools.RunPuzzle {
                         case 3 -> {
                             return '0';
                         }
-                        default -> throw new Exception("Robot panics");
+                        default -> throw e;
                     }
                 }
 
@@ -120,11 +183,11 @@ public class KeypadConundrum extends tools.RunPuzzle {
                         case 3 -> {
                             return 'A';
                         }
-                        default -> throw new Exception("Robot panics");
+                        default -> throw e;
                     }
                 }
 
-                default -> throw new Exception("Robot panics");
+                default -> throw e;
             }
         }
 
@@ -142,8 +205,87 @@ public class KeypadConundrum extends tools.RunPuzzle {
                 case '7' -> new Point(0, 0);
                 case '8' -> new Point(1, 0);
                 case '9' -> new Point(2, 0);
-                default -> throw new Exception("Robot panics");
+                default -> throw e;
             };
+        }
+    }
+
+    private class DirectionalKeypad extends Keypad {
+        /*
+         *  ^A
+         * <v>
+         */
+        public DirectionalKeypad() {
+            super();
+            this.start = new Point(2, 0);
+            this.position = new Point(start.x, start.y);
+            blankColumn = new ArrayList<>();
+            blankColumn.add('<');
+            blankRow = new ArrayList<>();
+            blankRow.add('^');
+            blankRow.add('A');
+        }
+
+        @Override
+        public char getButton(Point p) throws Exception {
+            switch(p.x) {
+                case 0 -> { 
+                    switch(p.y) {
+                        case 1 -> {
+                            return '<';
+                        }
+                        default -> throw e;
+                    }
+                }
+
+                case 1 -> {
+                    switch(p.y) {
+                        case 0 -> {
+                            return '^';
+                        }
+                        case 1 -> {
+                            return 'v';
+                        }
+                        default -> throw e;
+                    }
+                }
+
+                case 2 -> {
+                    switch(p.y) {
+                        case 0 -> {
+                            return 'A';
+                        }
+                        case 1 -> {
+                            return '>';
+                        }
+                        default -> throw e;
+                    }
+                }
+
+                default -> throw e;
+            }
+        }
+
+        @Override
+        public Point getPosition(char c) throws Exception {
+            switch(c) {
+                case '^' -> {
+                    return new Point(1, 0);
+                }
+                case 'A' -> {
+                    return new Point(2, 0);
+                }
+                case '<' -> {
+                    return new Point(0, 1);
+                }
+                case 'v' -> {
+                    return new Point(1, 1);
+                }
+                case '>' -> {
+                    return new Point(2, 1);
+                }
+                default -> throw e;
+            }
         }
     }
 
