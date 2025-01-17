@@ -10,12 +10,12 @@ public class KeypadConundrum extends tools.RunPuzzle {
 
     public KeypadConundrum(int dayNumber, String dayTitle, Object puzzleInput) {
         super(dayNumber, dayTitle, puzzleInput);
-        debug = false;
+        debug = true;
     }
 
     public static void main(String[] args) {
-        //RunPuzzle p = new KeypadConundrum(21, "Keypad Conundrum", test1);
-        RunPuzzle p = new KeypadConundrum(21, "Keypad Conundrum", puzzle);
+        RunPuzzle p = new KeypadConundrum(21, "Keypad Conundrum", test1);
+        //RunPuzzle p = new KeypadConundrum(21, "Keypad Conundrum", puzzle);
         //p.setLogFile("src\\Year2024\\day21\\log.txt");
         p.run();
     }
@@ -23,35 +23,42 @@ public class KeypadConundrum extends tools.RunPuzzle {
     @Override
     public ArrayList<TestCase> createTestCases() {
         ArrayList<TestCase> tests = new ArrayList<>();
-        tests.add(new TestCase<>(1, test1, 126384));
+        tests.add(new TestCase<>(1, test1, 126384l));
         return tests;
     }
 
     @Override
     public void printResult(Object result) {
-        log(defaultOutputIndent + (Integer)result);
+        log(defaultOutputIndent + (Long)result);
     }
 
     @Override
-    public Object doProcessing(int section, Object input) { // 255888 too high
+    public Object doProcessing(int section, Object input) { // 254188 too high
         String[] codes = (String[])input;
         keypads = new ArrayList<>();
         keypads.add(new NumericKeypad());
         keypads.add(new DirectionalKeypad());
         keypads.add(new DirectionalKeypad());
-        int complexityCount = 0;
+        long complexityCount = 0;
         for (String s : codes) {
             char[] previousButton = new char[keypads.size()];
             char[] nextButton = new char[keypads.size()];
-            StringBuilder[] validInstructions = new StringBuilder[keypads.size()];
+            ArrayList<ArrayList<StringBuilder>> validInstructions = new ArrayList<>();
             for (int i = 0; i < keypads.size(); i++) {
                 previousButton[i] = 'A';
-                validInstructions[i] = new StringBuilder();
+                validInstructions.add(new ArrayList<>());
             }
             for (char c : s.toCharArray()) {
                 nextButton[0] = c;
                 try {
-                    validInstructions[0].append(keypads.get(0).getInstruction(previousButton[0], nextButton[0]));
+                    ArrayList<StringBuilder> nextInstructions = new ArrayList<>();
+                    for (StringBuilder i : validInstructions.get(0)) {
+                        ArrayList<StringBuilder> nextString = keypads.get(0).getInstruction(previousButton[0], nextButton[0]);
+                        for (StringBuilder n : nextString) {
+                            nextInstructions.add(new StringBuilder(i).append(n.toString()));
+                        }
+                    }
+                    validInstructions.set(0, nextInstructions);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     return null;
@@ -60,10 +67,18 @@ public class KeypadConundrum extends tools.RunPuzzle {
             }
             for (int i = 1; i < keypads.size(); i++) {
                 Keypad k = keypads.get(i);
-                for (char c : validInstructions[i - 1].toString().toCharArray()) {
+                ArrayList<StringBuilder> instructions = validInstructions.get(i - 1);
+                for (char c : s.toCharArray()) {
                     nextButton[i] = c;
                     try {
-                        validInstructions[i].append(k.getInstruction(previousButton[i], nextButton[i]));
+                        ArrayList<StringBuilder> nextInstructions = new ArrayList<>();
+                        for (StringBuilder j : instructions) {
+                            ArrayList<StringBuilder> nextString = k.getInstruction(previousButton[i], nextButton[i]);
+                            for (StringBuilder n : nextString) {
+                                nextInstructions.add(new StringBuilder(j).append(n.toString()));
+                            }
+                        }
+                        validInstructions.set(i, nextInstructions);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         return null;
@@ -71,9 +86,12 @@ public class KeypadConundrum extends tools.RunPuzzle {
                     previousButton[i] = nextButton[i];
                 }
             }
-            logDebug("Code " + s + " length " + validInstructions[keypads.size() - 1].length());
-            for (int i = 1; i < keypads.size(); i++) logDebug("\t" + validInstructions[i].toString());
-            complexityCount += Integer.parseInt(s.substring(0, s.length() - 1)) * validInstructions[keypads.size() - 1].length();
+            int minLength = Integer.MAX_VALUE;
+            for (StringBuilder t : validInstructions.get(keypads.size() - 1)) {
+                minLength = Math.min(minLength, t.length());
+            }
+            logDebug("Code " + s + " length " + minLength);
+            complexityCount += Long.parseLong(s.substring(0, s.length() - 1)) * minLength;
         }
         return complexityCount;
     }
@@ -88,28 +106,35 @@ public class KeypadConundrum extends tools.RunPuzzle {
         public abstract char getButton(Point p) throws Exception;
         public abstract Point getPosition(char c) throws Exception;
 
-        public String getInstruction(char prev, char next) throws Exception {
+        public ArrayList<StringBuilder> getInstruction(char prev, char next) throws Exception {
             Point pP = this.getPosition(prev);
             Point nP = this.getPosition(next);
             Point delta = new Point(nP.x - pP.x, nP.y - pP.y);
             char horiz = delta.x >= 0 ? '>' : '<';
             char vert = delta.y >= 0 ? 'v' : '^';
+            ArrayList<StringBuilder> ss = new ArrayList<>();
             StringBuilder s = new StringBuilder();
             if (blankColumn.contains(prev) && blankRow.contains(next)) {
                 s.repeat(horiz, Math.abs(delta.x));
                 s.repeat(vert, Math.abs(delta.y));
+                ss.add(s);
             }
             else if (blankColumn.contains(next) && blankRow.contains(prev)) {
                 s.repeat(vert, Math.abs(delta.y));
                 s.repeat(horiz, Math.abs(delta.x));
+                ss.add(s);
             }
             else {
+                s.repeat(vert, Math.abs(delta.y));
+                s.repeat(horiz, Math.abs(delta.x));
+                ss.add(s);
+                s = new StringBuilder();
                 s.repeat(horiz, Math.abs(delta.x));
                 s.repeat(vert, Math.abs(delta.y));
+                ss.add(s);
             }
-            s.append('A');
-            logDebug("\t\tFrom " + prev + " to " + next + " is " + s.toString());
-            return s.toString();
+            for (StringBuilder t : ss) t.append('A');
+            return ss;
         }
     }
 
